@@ -1,0 +1,4 @@
+this is a standalone module for fcitx, it can use pinyin API on the internet
+to input.
+
+Requires Fcitx 4.1.0 (Currently is not released).
