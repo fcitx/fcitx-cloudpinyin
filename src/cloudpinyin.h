@@ -31,7 +31,7 @@
 
 struct _FcitxInstance;
 
-typedef enum _CloudPinyinRequestType 
+typedef enum _CloudPinyinRequestType
 {
     RequestKey,
     RequestPinyin
@@ -57,7 +57,7 @@ typedef struct _CloudPinyinCache
 } CloudPinyinCache;
 
 typedef struct _FcitxCloudPinyin
-{    
+{
     struct _FcitxInstance* owner;
     CURLM* curlm;
     CurlQueue* queue;
@@ -67,3 +67,4 @@ typedef struct _FcitxCloudPinyin
 } FcitxCloudPinyin;
 
 #endif
+// kate: indent-mode cstyle; space-indent on; indent-width 0; 
