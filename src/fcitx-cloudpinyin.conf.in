@@ -1,0 +1,8 @@
+[Addon]
+Name=fcitx-cloudpinyin
+_GeneralName=Cloud Pinyin
+_Comment=Add Cloud Pinyin Support to Pinyin Input Method
+Category=Module
+Enabled=True
+Library=fcitx-cloudpinyin.so
+Type=SharedLibrary
