@@ -98,7 +98,7 @@ void CloudPinyinAddCandidateWord(void* arg)
             strcmp(im->strIconName, "sunpinyin") == 0)
     {
         /* there is something pending input */
-        if (strlen(input->strCodeInput) >= 5)
+        if (strlen(input->strCodeInput) >= 10)
         {
             CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, input->strCodeInput);
             FcitxLog(LOGLEVEL, "%s", input->strCodeInput);
@@ -293,6 +293,7 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                                 CloudPinyinFillCandidateWord(cloudpinyin, input->strCodeInput);
                             }
                         }
+                        free(realstring);
                     }
 
                 }
@@ -427,4 +428,4 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
     else
         return IRV_DO_NOTHING;
 }
-// kate: indent-mode cstyle; space-indent on; indent-width 0; 
+// kate: indent-mode cstyle; space-indent on; indent-width 0;
