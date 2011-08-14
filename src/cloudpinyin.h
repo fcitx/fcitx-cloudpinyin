@@ -27,7 +27,7 @@
 #define SOGOU_KEY_LENGTH 32
 #define MAX_CACHE_ENTRY 2048
 
-#define _(x) gettext(x)
+#define _(x) dgettext("fcitx-cloudpinyin", (x))
 
 struct _FcitxInstance;
 

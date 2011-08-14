@@ -67,6 +67,7 @@ FcitxModule module = {
 void* CloudPinyinCreate(FcitxInstance* instance)
 {
     FcitxCloudPinyin* cloudpinyin = fcitx_malloc0(sizeof(FcitxCloudPinyin));
+    bindtextdomain("fcitx-googlepinyin", LOCALEDIR);
     cloudpinyin->owner = instance;
 
     if (!LoadCloudPinyinConfig(&cloudpinyin->config))
