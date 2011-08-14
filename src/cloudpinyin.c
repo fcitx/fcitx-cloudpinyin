@@ -401,7 +401,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     if (order < 0)
         order = 0;
 
-    CandidateWordInsert(cloudpinyin->owner->input.candList, &candWord, cloudpinyin->config.iCandidateOrder);
+    CandidateWordInsert(cloudpinyin->owner->input.candList, &candWord, order);
 }
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
