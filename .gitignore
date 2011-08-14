@@ -4,3 +4,4 @@ build/*
 .directory
 *.kate-swp
 *.orig
+*~
