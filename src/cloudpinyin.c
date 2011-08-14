@@ -390,7 +390,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     else
     {
         cloudCand->filled = false;
-        candWord.strWord = strdup("☯");
+        candWord.strWord = strdup("..");
     }
 
     candWord.callback = CloudPinyinGetCandWord;
