@@ -26,6 +26,8 @@
 #include "cloudpinyin.h"
 #include <fcitx-utils/log.h>
 #include <fcitx/candidate.h>
+#include <fcitx-config/xdg.h>
+#include <errno.h>
 
 #define LOGLEVEL DEBUG
 
@@ -48,6 +50,10 @@ static CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, co
 static INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord);
 static void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
+static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
+static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
+
+CONFIG_DESC_DEFINE(GetCloudPinyinConfigDesc, "fcitx-cloudpinyin.desc")
 
 FCITX_EXPORT_API
 FcitxModule module = {
@@ -62,6 +68,12 @@ void* CloudPinyinCreate(FcitxInstance* instance)
 {
     FcitxCloudPinyin* cloudpinyin = fcitx_malloc0(sizeof(FcitxCloudPinyin));
     cloudpinyin->owner = instance;
+
+    if (!LoadCloudPinyinConfig(&cloudpinyin->config))
+    {
+        free(cloudpinyin);
+        return NULL;
+    }
 
     cloudpinyin->curlm = curl_multi_init();
     if (cloudpinyin->curlm == NULL)
@@ -98,7 +110,7 @@ void CloudPinyinAddCandidateWord(void* arg)
             strcmp(im->strIconName, "sunpinyin") == 0)
     {
         /* there is something pending input */
-        if (strlen(input->strCodeInput) >= 10)
+        if (strlen(input->strCodeInput) >= cloudpinyin->config.iMinimumPinyinLength)
         {
             CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, input->strCodeInput);
             FcitxLog(LOGLEVEL, "%s", input->strCodeInput);
@@ -199,7 +211,8 @@ void CloudPinyinDestroy(void* arg)
 
 void CloudPinyinReloadConfig(void* arg)
 {
-
+    FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
+    LoadCloudPinyinConfig(&cloudpinyin->config);
 }
 
 void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPinyin)
@@ -287,7 +300,7 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                         if (strcmp(input->strCodeInput, queue->pinyin) == 0)
                         {
                             if (strcmp(im->strIconName, "pinyin") == 0 ||
-                                    strcmp(im->strIconName, "googlepinyin") == 0 ||
+                                    strcmp(im->strIconName, "cloudpinyin") == 0 ||
                                     strcmp(im->strIconName, "sunpinyin") == 0)
                             {
                                 CloudPinyinFillCandidateWord(cloudpinyin, input->strCodeInput);
@@ -384,7 +397,11 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     candWord.priv = cloudCand;
     candWord.strExtra = strdup(_(" (via cloud)"));
 
-    CandidateWordInsert(cloudpinyin->owner->input.candList, &candWord, 1);
+    int order = cloudpinyin->config.iCandidateOrder - 1;
+    if (order < 0)
+        order = 0;
+
+    CandidateWordInsert(cloudpinyin->owner->input.candList, &candWord, cloudpinyin->config.iCandidateOrder);
 }
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
@@ -428,4 +445,48 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
     else
         return IRV_DO_NOTHING;
 }
+
+
+/**
+ * @brief Load the config file for fcitx-cloudpinyin
+ *
+ * @param Bool is reload or not
+ **/
+boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
+{
+    ConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
+    if (configDesc == NULL)
+        return false;
+
+    FILE *fp = GetXDGFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "rt", NULL);
+
+    if (!fp)
+    {
+        if (errno == ENOENT)
+            SaveCloudPinyinConfig(fs);
+    }
+    ConfigFile *cfile = ParseConfigFileFp(fp, configDesc);
+    FcitxCloudPinyinConfigConfigBind(fs, cfile, configDesc);
+    ConfigBindSync(&fs->config);
+
+    if (fp)
+        fclose(fp);
+
+    return true;
+}
+
+/**
+ * @brief Save the config
+ *
+ * @return void
+ **/
+void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
+{
+    ConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
+    FILE *fp = GetXDGFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "wt", NULL);
+    SaveConfigFileFp(fp, &fs->config, configDesc);
+    if (fp)
+        fclose(fp);
+}
+
 // kate: indent-mode cstyle; space-indent on; indent-width 0;

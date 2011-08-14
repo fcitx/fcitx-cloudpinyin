@@ -12,15 +12,17 @@ link_directories(
     ${FCITX4_FCITX_UTILS_LIBRARY_DIRS}
 )
 
-set(FCITX_REMOTE_MODULE_SOURCES
-    remote.c
-)
-
 set(FCITX_CLOUDPINYIN_SRCS
     cloudpinyin.c
+    cloudpinyinconifg.c
 )
 
 fcitx_add_addon(fcitx-cloudpinyin ${FCITX_CLOUDPINYIN_SRCS})
-target_link_libraries( fcitx-cloudpinyin fcitx-core fcitx-utils ${CURL_LIBRARIES})
+target_link_libraries( fcitx-cloudpinyin
+                       ${FCITX4_FCITX_LIBRARIES}
+                       ${FCITX4_FCITX_CONFIG_LIBRARIES}
+                       ${FCITX4_FCITX_UTILS_LIBRARIES}
+                       ${CURL_LIBRARIES})
 
 fcitx_add_addon_conf_file(fcitx-cloudpinyin.conf)
+fcitx_add_configdesc_file(fcitx-cloudpinyin.desc)
