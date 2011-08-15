@@ -1,14 +1,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 #
-# , 2011.
+# Weng Xuetian <wengxt@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-14 13:32+0800\n"
-"PO-Revision-Date: 2011-08-14 13:33+0800\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2011-08-15 18:38+0800\n"
+"PO-Revision-Date: 2011-08-15 18:39+0800\n"
+"Last-Translator: Weng Xuetian <wengxt@gmail.com>\n"
 "Language-Team: Chinese Simplified <kde-i18n-doc@kde.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Generator: Lokalize 1.2\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:385
+#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:426
 msgid " (via cloud)"
 msgstr " (来自云)"
 
@@ -39,6 +39,10 @@ msgstr "云拼音"
 #: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:9
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
 msgstr "最小触发云拼音的拼音长度"
+
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:14
+msgid "Only use origin Pinyin to query the result"
+msgstr "只使用原始拼音查询结果"
 
 #~ msgid "Priority of GooglePinyin"
 #~ msgstr "Google 拼音的优先级"

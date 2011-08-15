@@ -61,6 +61,7 @@ typedef struct _FcitxCloudPinyinConfig
     GenericConfig config;
     int iCandidateOrder;
     int iMinimumPinyinLength;
+    boolean bUsePinyinOnly;
 } FcitxCloudPinyinConfig;
 
 typedef struct _FcitxCloudPinyin

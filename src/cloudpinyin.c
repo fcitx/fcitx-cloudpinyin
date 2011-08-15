@@ -29,7 +29,7 @@
 #include <fcitx-config/xdg.h>
 #include <errno.h>
 
-#define LOGLEVEL DEBUG
+#define LOGLEVEL INFO
 
 typedef struct _CloudCandWord {
     boolean filled;
@@ -52,6 +52,8 @@ static void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const ch
 static void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
+static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin);
+static char* SplitHZAndPY(char* string);
 
 CONFIG_DESC_DEFINE(GetCloudPinyinConfigDesc, "fcitx-cloudpinyin.desc")
 
@@ -67,7 +69,7 @@ FcitxModule module = {
 void* CloudPinyinCreate(FcitxInstance* instance)
 {
     FcitxCloudPinyin* cloudpinyin = fcitx_malloc0(sizeof(FcitxCloudPinyin));
-    bindtextdomain("fcitx-googlepinyin", LOCALEDIR);
+    bindtextdomain("fcitx-cloudpinyin", LOCALEDIR);
     cloudpinyin->owner = instance;
 
     if (!LoadCloudPinyinConfig(&cloudpinyin->config))
@@ -113,11 +115,22 @@ void CloudPinyinAddCandidateWord(void* arg)
         /* there is something pending input */
         if (strlen(input->strCodeInput) >= cloudpinyin->config.iMinimumPinyinLength)
         {
-            CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, input->strCodeInput);
-            FcitxLog(LOGLEVEL, "%s", input->strCodeInput);
+            char* strToFree = NULL, *inputString;
+            if (cloudpinyin->config.bUsePinyinOnly)
+                inputString = input->strCodeInput;
+            else
+            {
+                strToFree = GetCurrentString(cloudpinyin);
+                inputString = SplitHZAndPY(strToFree);
+            }
+            CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, inputString);
+            FcitxLog(LOGLEVEL, "%s", inputString);
             if (cacheEntry == NULL)
-                CloudPinyinAddInputRequest(cloudpinyin, input->strCodeInput);
-            _CloudPinyinAddCandidateWord(cloudpinyin, input->strCodeInput);
+                CloudPinyinAddInputRequest(cloudpinyin, inputString);
+            _CloudPinyinAddCandidateWord(cloudpinyin, inputString);
+
+            if (strToFree)
+                free(strToFree);
         }
     }
 
@@ -231,8 +244,10 @@ void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPi
     head->next = queue;
     queue->type = RequestPinyin;
     queue->pinyin = strdup(strPinyin);
+    char* urlstring = curl_escape(strPinyin, strlen(strPinyin));
     char *url = NULL;
-    asprintf(&url, "http://web.pinyin.sogou.com/api/py?key=%s&query=%s", cloudpinyin->key, strPinyin);
+    asprintf(&url, "http://web.pinyin.sogou.com/api/py?key=%s&query=%s", cloudpinyin->key, urlstring);
+    free(urlstring);
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
@@ -298,15 +313,27 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                             cacheEntry = CloudPinyinAddToCache(cloudpinyin, queue->pinyin, realstring);
 
                         FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
-                        if (strcmp(input->strCodeInput, queue->pinyin) == 0)
+
+                        char* strToFree = NULL, *inputString;
+                        if (cloudpinyin->config.bUsePinyinOnly)
+                            inputString = input->strCodeInput;
+                        else
+                        {
+                            strToFree = GetCurrentString(cloudpinyin);
+                            inputString = SplitHZAndPY(strToFree);
+                        }
+                        FcitxLog(LOGLEVEL, "fill: %s %s", inputString, queue->pinyin);
+                        if (strcmp(inputString, queue->pinyin) == 0)
                         {
                             if (strcmp(im->strIconName, "pinyin") == 0 ||
-                                    strcmp(im->strIconName, "cloudpinyin") == 0 ||
+                                    strcmp(im->strIconName, "googlepinyin") == 0 ||
                                     strcmp(im->strIconName, "sunpinyin") == 0)
                             {
-                                CloudPinyinFillCandidateWord(cloudpinyin, input->strCodeInput);
+                                CloudPinyinFillCandidateWord(cloudpinyin, inputString);
                             }
                         }
+                        if (strToFree)
+                            free(strToFree);
                         free(realstring);
                     }
 
@@ -440,7 +467,21 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
     CloudCandWord* cloudCand = candWord->priv;
     if (cloudCand->filled)
     {
-        strcpy(GetOutputString(&cloudpinyin->owner->input), candWord->strWord);
+        if (cloudpinyin->config.bUsePinyinOnly)
+        {
+            strcpy(GetOutputString(&cloudpinyin->owner->input), candWord->strWord);
+        }
+        else
+        {
+            char* string = GetCurrentString(cloudpinyin);
+            char* py = SplitHZAndPY(string);
+            *py = 0;
+
+            strncpy(GetOutputString(&cloudpinyin->owner->input), string, MAX_USER_INPUT);
+            strncat(GetOutputString(&cloudpinyin->owner->input), candWord->strWord, MAX_USER_INPUT);
+
+            free(string);
+        }
         return IRV_COMMIT_STRING;
     }
     else
@@ -488,6 +529,40 @@ void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
     SaveConfigFileFp(fp, &fs->config, configDesc);
     if (fp)
         fclose(fp);
+}
+
+char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
+{
+    char* string = MessagesToCString(cloudpinyin->owner->input.msgPreedit);
+    char* p = string, *pp = string;
+    while(*p)
+    {
+        if (*p != ' ')
+        {
+            *pp = *p;
+            pp ++;
+        }
+        p ++;
+    }
+    *pp = 0;
+    return string;
+}
+
+char* SplitHZAndPY(char* string)
+{
+    char* s = string;
+    while (*s)
+    {
+        char* p;
+        int chr;
+
+        p = utf8_get_char(s, &chr);
+        if (p - s == 1)
+            break;
+        s = p;
+    }
+
+    return s;
 }
 
 // kate: indent-mode cstyle; space-indent on; indent-width 0;
