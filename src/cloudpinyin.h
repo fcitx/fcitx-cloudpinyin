@@ -62,6 +62,7 @@ typedef struct _FcitxCloudPinyinConfig
     int iCandidateOrder;
     int iMinimumPinyinLength;
     boolean bUsePinyinOnly;
+    boolean bDontShowSource;
 } FcitxCloudPinyinConfig;
 
 typedef struct _FcitxCloudPinyin

@@ -13,5 +13,10 @@ Type=Boolean
 DefaultValue=False
 Description=Only use origin Pinyin to query the result
 
+[CloudPinyin/DontShowSource]
+Type=Boolean
+DefaultValue=False
+Description=Don't Show the 'via cloud' hint
+
 [DescriptionFile]
 LocaleDomain=fcitx-cloudpinyin
