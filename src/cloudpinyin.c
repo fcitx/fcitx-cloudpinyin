@@ -29,7 +29,7 @@
 #include <fcitx-config/xdg.h>
 #include <errno.h>
 
-#define LOGLEVEL INFO
+#define LOGLEVEL DEBUG
 
 typedef struct _CloudCandWord {
     boolean filled;
