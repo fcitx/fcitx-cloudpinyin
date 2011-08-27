@@ -25,11 +25,19 @@
 #include <libintl.h>
 
 #define SOGOU_KEY_LENGTH 32
+#define QQ_KEY_LENGTH 32
 #define MAX_CACHE_ENTRY 2048
 
 #define _(x) dgettext("fcitx-cloudpinyin", (x))
 
 struct _FcitxInstance;
+
+typedef enum _CloudPinyinSource
+{
+    CloudPinyin_Sogou = 0,
+    CloudPinyin_QQ = 1,
+    CloudPinyin_Google = 2
+} CloudPinyinSource;
 
 typedef enum _CloudPinyinRequestType
 {
@@ -47,6 +55,7 @@ typedef struct _CurlQueue
     char* str;
     char* pinyin;
     size_t size;
+    CloudPinyinSource source;
 } CurlQueue;
 
 typedef struct _CloudPinyinCache
@@ -63,6 +72,7 @@ typedef struct _FcitxCloudPinyinConfig
     int iMinimumPinyinLength;
     boolean bUsePinyinOnly;
     boolean bDontShowSource;
+    CloudPinyinSource source;
 } FcitxCloudPinyinConfig;
 
 typedef struct _FcitxCloudPinyin
@@ -74,6 +84,8 @@ typedef struct _FcitxCloudPinyin
     char key[SOGOU_KEY_LENGTH + 1];
     boolean initialized;
     CloudPinyinCache* cache;
+    int counter;
+    boolean isrequestkey;
 } FcitxCloudPinyin;
 
 CONFIG_BINDING_DECLARE(FcitxCloudPinyinConfig);
