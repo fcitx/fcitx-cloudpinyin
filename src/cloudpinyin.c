@@ -665,7 +665,6 @@ void QQParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
 {
     char* str = fcitx_trim(queue->str);
     const char* ime_patch_key = "{\"key\":\"";
-    size_t len = strlen(str);
     if (strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0)
     {
         if (sscanf(str,"{\"key\":\"%32s\",\"ret\":\"suc\"}", cloudpinyin->key) > 0)
