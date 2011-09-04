@@ -29,11 +29,20 @@
 #include <fcitx-config/xdg.h>
 #include <errno.h>
 
-#define LOGLEVEL INFO
+#define KEY_PRESS_INTERVAL 50
+
+#define LOGLEVEL DEBUG
 
 typedef struct _CloudCandWord {
     boolean filled;
 } CloudCandWord;
+
+typedef struct _CloudPinyinEngine {
+    const char* RequestKey;
+    const char* RequestPinyin;
+    void (*ParseKey)(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+    char* (*ParsePinyin)(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+} CloudPinyinEngine;
 
 static void* CloudPinyinCreate(FcitxInstance* instance);
 static void CloudPinyinSetFD(void* arg);
@@ -46,7 +55,7 @@ static void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char
 static void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
 static size_t CloudPinyinWriteFunction(char *ptr, size_t size, size_t nmemb, void *userdata);
 static CloudPinyinCache* CloudPinyinCacheLookup(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
-static CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const char* pinyin, const char* string);
+static CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const char* pinyin, char* string);
 static INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord);
 static void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
@@ -54,6 +63,35 @@ static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin);
 static char* SplitHZAndPY(char* string);
+
+void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+char* SogouParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+void QQParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+char* QQParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+char* GoogleParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+
+CloudPinyinEngine engine[3] =
+{
+    {
+        "http://web.pinyin.sogou.com/web_ime/patch.php",
+        "http://web.pinyin.sogou.com/api/py?key=%s&query=%s",
+        SogouParseKey,
+        SogouParsePinyin
+    },
+    {
+        "http://ime.qq.com/fcgi-bin/getkey",
+        "http://ime.qq.com/fcgi-bin/getword?key=%s&q=%s",
+        QQParseKey,
+        QQParsePinyin
+    },
+    {
+        NULL,
+        "http://www.google.com/inputtools/request?ime=pinyin&text=%s",
+        NULL,
+        GoogleParsePinyin
+    }
+};
+
 
 CONFIG_DESC_DEFINE(GetCloudPinyinConfigDesc, "fcitx-cloudpinyin.desc")
 
@@ -105,7 +143,15 @@ void CloudPinyinAddCandidateWord(void* arg)
     FcitxInputState* input = &cloudpinyin->owner->input;
 
     if (cloudpinyin->initialized == false)
+    {
+        if (!cloudpinyin->isrequestkey)
+        {
+            cloudpinyin->counter ++;
+            if (cloudpinyin->counter >= KEY_PRESS_INTERVAL)
+                CloudPinyinRequestKey(cloudpinyin);
+        }
         return;
+    }
 
     /* check whether the current im is pinyin */
     if (strcmp(im->strIconName, "pinyin") == 0 ||
@@ -140,6 +186,19 @@ void CloudPinyinAddCandidateWord(void* arg)
 void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
 {
     int still_running;
+    if (cloudpinyin->isrequestkey)
+        return;
+
+    cloudpinyin->isrequestkey = true;
+    if (engine[cloudpinyin->config.source].RequestKey == NULL)
+    {
+        cloudpinyin->initialized = true;
+        cloudpinyin->key[0] = '\0';
+        cloudpinyin->counter = 0;
+        cloudpinyin->isrequestkey = false;
+        return;
+    }
+
     CURL* curl = curl_easy_init();
     if (!curl)
         return;
@@ -151,8 +210,9 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
         head = head->next;
     head->next = queue;
     queue->type = RequestKey;
+    queue->source = cloudpinyin->config.source;
 
-    curl_easy_setopt(curl, CURLOPT_URL, "http://web.pinyin.sogou.com/web_ime/patch.php");
+    curl_easy_setopt(curl, CURLOPT_URL, engine[cloudpinyin->config.source].RequestKey);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
     curl_multi_add_handle(cloudpinyin->curlm, curl);
@@ -226,7 +286,14 @@ void CloudPinyinDestroy(void* arg)
 void CloudPinyinReloadConfig(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
+    CloudPinyinSource previousSource = cloudpinyin->config.source;
     LoadCloudPinyinConfig(&cloudpinyin->config);
+    if (previousSource != cloudpinyin->config.source)
+    {
+        cloudpinyin->initialized = false;
+        cloudpinyin->key[0] = '\0';
+        cloudpinyin->counter = KEY_PRESS_INTERVAL;
+    }
 }
 
 void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPinyin)
@@ -244,9 +311,13 @@ void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPi
     head->next = queue;
     queue->type = RequestPinyin;
     queue->pinyin = strdup(strPinyin);
+    queue->source = cloudpinyin->config.source;
     char* urlstring = curl_escape(strPinyin, strlen(strPinyin));
     char *url = NULL;
-    asprintf(&url, "http://web.pinyin.sogou.com/api/py?key=%s&query=%s", cloudpinyin->key, urlstring);
+    if (engine[cloudpinyin->config.source].RequestKey)
+        asprintf(&url, engine[cloudpinyin->config.source].RequestPinyin, cloudpinyin->key, urlstring);
+    else
+        asprintf(&url, engine[cloudpinyin->config.source].RequestPinyin, urlstring);
     free(urlstring);
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -271,22 +342,16 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
     FcitxInputState* input = &cloudpinyin->owner->input;
     if (queue->type == RequestKey)
     {
+        cloudpinyin->isrequestkey = false;
+        cloudpinyin->counter = 0;
+
+        if (queue->source != cloudpinyin->config.source)
+            return;
+
         if (queue->http_code == 200)
         {
-            char* str = fcitx_trim(queue->str);
-            const char* ime_patch_key = "ime_patch_key = \"";
-            size_t len = strlen(str);
-            if (len == SOGOU_KEY_LENGTH + strlen(ime_patch_key) + 1
-                    && strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0
-                    && str[len - 1] == '\"'
-               )
-            {
-                sscanf(str,"ime_patch_key = \"%s\"", cloudpinyin->key);
-                cloudpinyin->initialized = true;
-                cloudpinyin->key[SOGOU_KEY_LENGTH] = '\0';
-            }
-
-            free(str);
+            if (engine[cloudpinyin->config.source].ParseKey)
+                engine[cloudpinyin->config.source].ParseKey(cloudpinyin, queue);
         }
         else
         {
@@ -295,49 +360,38 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
     }
     else if (queue->type == RequestPinyin)
     {
-        if (queue->http_code == 200)
+        if (queue->http_code == 200 && cloudpinyin->config.source == queue->source)
         {
-            char *start = NULL, *end = NULL;
-            if ((start = strchr(queue->str, '"')) != NULL && (end = strstr(queue->str, "%EF%BC%9A")) != NULL)
+            char *realstring = engine[cloudpinyin->config.source].ParsePinyin(cloudpinyin, queue);
+            if (realstring)
             {
-                start ++;
-                if (start < end)
+                CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, queue->pinyin);
+                if (cacheEntry == NULL)
+                    cacheEntry = CloudPinyinAddToCache(cloudpinyin, queue->pinyin, realstring);
+
+                FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
+
+                char* strToFree = NULL, *inputString;
+                if (cloudpinyin->config.bUsePinyinOnly)
+                    inputString = input->strCodeInput;
+                else
                 {
-                    size_t length = end - start;
-                    int conv_length;
-                    char *realstring = curl_easy_unescape(queue->curl, start, length, &conv_length);
-                    if (realstring)
-                    {
-                        CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, queue->pinyin);
-                        if (cacheEntry == NULL)
-                            cacheEntry = CloudPinyinAddToCache(cloudpinyin, queue->pinyin, realstring);
-
-                        FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
-
-                        char* strToFree = NULL, *inputString;
-                        if (cloudpinyin->config.bUsePinyinOnly)
-                            inputString = input->strCodeInput;
-                        else
-                        {
-                            strToFree = GetCurrentString(cloudpinyin);
-                            inputString = SplitHZAndPY(strToFree);
-                        }
-                        FcitxLog(LOGLEVEL, "fill: %s %s", inputString, queue->pinyin);
-                        if (strcmp(inputString, queue->pinyin) == 0)
-                        {
-                            if (strcmp(im->strIconName, "pinyin") == 0 ||
-                                    strcmp(im->strIconName, "googlepinyin") == 0 ||
-                                    strcmp(im->strIconName, "sunpinyin") == 0)
-                            {
-                                CloudPinyinFillCandidateWord(cloudpinyin, inputString);
-                            }
-                        }
-                        if (strToFree)
-                            free(strToFree);
-                        free(realstring);
-                    }
-
+                    strToFree = GetCurrentString(cloudpinyin);
+                    inputString = SplitHZAndPY(strToFree);
                 }
+                FcitxLog(LOGLEVEL, "fill: %s %s", inputString, queue->pinyin);
+                if (strcmp(inputString, queue->pinyin) == 0)
+                {
+                    if (strcmp(im->strIconName, "pinyin") == 0 ||
+                            strcmp(im->strIconName, "googlepinyin") == 0 ||
+                            strcmp(im->strIconName, "sunpinyin") == 0)
+                    {
+                        CloudPinyinFillCandidateWord(cloudpinyin, inputString);
+                    }
+                }
+                if (strToFree)
+                    free(strToFree);
+                free(realstring);
             }
         }
     }
@@ -388,7 +442,7 @@ CloudPinyinCache* CloudPinyinCacheLookup(FcitxCloudPinyin* cloudpinyin, const ch
     return cacheEntry;
 }
 
-CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const char* pinyin, const char* string)
+CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const char* pinyin, char* string)
 {
     CloudPinyinCache* cacheEntry = fcitx_malloc0(sizeof(CloudPinyinCache));
     cacheEntry->pinyin = strdup(pinyin);
@@ -398,7 +452,11 @@ CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const cha
     /* if there is too much cached, remove the first one, though LRU might be a better algorithm */
     if (HASH_COUNT(cloudpinyin->cache) > MAX_CACHE_ENTRY)
     {
+        CloudPinyinCache* head = cloudpinyin->cache;
         HASH_DEL(cloudpinyin->cache, cloudpinyin->cache);
+        free(head->pinyin);
+        free(head->str);
+        free(head);
     }
     return cacheEntry;
 }
@@ -423,7 +481,10 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     candWord.callback = CloudPinyinGetCandWord;
     candWord.owner = cloudpinyin;
     candWord.priv = cloudCand;
-    candWord.strExtra = strdup(_(" (via cloud)"));
+    if (cloudpinyin->config.bDontShowSource)
+        candWord.strExtra = NULL;
+    else
+        candWord.strExtra = strdup(_(" (via cloud)"));
 
     int order = cloudpinyin->config.iCandidateOrder - 1;
     if (order < 0)
@@ -564,5 +625,93 @@ char* SplitHZAndPY(char* string)
 
     return s;
 }
+
+void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
+{
+    char* str = fcitx_trim(queue->str);
+    const char* ime_patch_key = "ime_patch_key = \"";
+    size_t len = strlen(str);
+    if (len == SOGOU_KEY_LENGTH + strlen(ime_patch_key) + 1
+            && strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0
+            && str[len - 1] == '\"'
+        )
+    {
+        sscanf(str,"ime_patch_key = \"%s\"", cloudpinyin->key);
+        cloudpinyin->initialized = true;
+        cloudpinyin->key[SOGOU_KEY_LENGTH] = '\0';
+    }
+
+    free(str);
+}
+
+char* SogouParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
+{
+    char *start = NULL, *end = NULL;
+    if ((start = strchr(queue->str, '"')) != NULL && (end = strstr(queue->str, "%EF%BC%9A")) != NULL)
+    {
+        start ++;
+        if (start < end)
+        {
+            size_t length = end - start;
+            int conv_length;
+            char *realstring = curl_easy_unescape(queue->curl, start, length, &conv_length);
+            return realstring;
+        }
+    }
+    return NULL;
+}
+
+void QQParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
+{
+    char* str = fcitx_trim(queue->str);
+    const char* ime_patch_key = "{\"key\":\"";
+    if (strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0)
+    {
+        if (sscanf(str,"{\"key\":\"%32s\",\"ret\":\"suc\"}", cloudpinyin->key) > 0)
+        {
+            cloudpinyin->initialized = true;
+            cloudpinyin->key[QQ_KEY_LENGTH] = '\0';
+        }
+    }
+
+    free(str);
+}
+
+char* QQParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
+{
+    char *start = NULL, *end = NULL;
+    if ((start = strstr(queue->str, "\"rs\":[\"")) != NULL)
+    {
+        start += strlen( "\"rs\":[\"");
+        if ((end = strstr(start, "\"")) != NULL)
+        {
+            size_t length = end - start;
+            char *realstring = fcitx_malloc0(sizeof(char) * (length + 1));
+            strncpy(realstring, start, length);
+            realstring[length] = '\0';
+            return realstring;
+        }
+    }
+    return NULL;
+}
+
+char* GoogleParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
+{
+    char *start = NULL, *end = NULL;
+    if ((start = strstr(queue->str, "\",[\"")) != NULL)
+    {
+        start += strlen( "\",[\"");
+        if ((end = strstr(start, "\"")) != NULL)
+        {
+            size_t length = end - start;
+            char *realstring = fcitx_malloc0(sizeof(char) * (length + 1));
+            strncpy(realstring, start, length);
+            realstring[length] = '\0';
+            return realstring;
+        }
+    }
+    return NULL;
+}
+
 
 // kate: indent-mode cstyle; space-indent on; indent-width 0;

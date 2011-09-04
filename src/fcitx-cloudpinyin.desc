@@ -13,5 +13,19 @@ Type=Boolean
 DefaultValue=False
 Description=Only use origin Pinyin to query the result
 
+[CloudPinyin/DontShowSource]
+Type=Boolean
+DefaultValue=False
+Description=Don't Show the 'via cloud' hint
+
+[CloudPinyin/Source]
+Type=Enum
+DefaultValue=Sogou
+Description=Cloud Pinyin Source
+EnumCount=3
+Enum0=Sogou
+Enum1=QQ
+Enum2=Google
+
 [DescriptionFile]
 LocaleDomain=fcitx-cloudpinyin

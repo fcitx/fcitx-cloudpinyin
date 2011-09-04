@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-15 18:38+0800\n"
-"PO-Revision-Date: 2011-08-15 18:39+0800\n"
+"POT-Creation-Date: 2011-08-27 10:51+0800\n"
+"PO-Revision-Date: 2011-08-27 10:52+0800\n"
 "Last-Translator: Weng Xuetian <wengxt@gmail.com>\n"
 "Language-Team: Chinese Simplified <kde-i18n-doc@kde.org>\n"
 "Language: \n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Generator: Lokalize 1.2\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:426
+#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:487
 msgid " (via cloud)"
 msgstr " (来自云)"
 
@@ -33,8 +33,20 @@ msgstr "云拼音"
 msgid "Cloud Pinyin Candidate Word Order"
 msgstr "云拼音候选词顺序"
 
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:24
+msgid "Cloud Pinyin Source"
+msgstr "云拼音来源"
+
 msgid "CloudPinyin"
 msgstr "云拼音"
+
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:19
+msgid "Don't Show the 'via cloud' hint"
+msgstr "不显示‘来自云’提示"
+
+#: unknown
+msgid "Google"
+msgstr "Google"
 
 #: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:9
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
@@ -43,6 +55,14 @@ msgstr "最小触发云拼音的拼音长度"
 #: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:14
 msgid "Only use origin Pinyin to query the result"
 msgstr "只使用原始拼音查询结果"
+
+#: unknown
+msgid "QQ"
+msgstr "QQ"
+
+#: unknown
+msgid "Sogou"
+msgstr "搜狗"
 
 #~ msgid "Priority of GooglePinyin"
 #~ msgstr "Google 拼音的优先级"
