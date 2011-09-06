@@ -15,7 +15,7 @@ Description=Only use origin Pinyin to query the result
 
 [CloudPinyin/DontShowSource]
 Type=Boolean
-DefaultValue=False
+DefaultValue=True
 Description=Don't Show the 'via cloud' hint
 
 [CloudPinyin/Source]
