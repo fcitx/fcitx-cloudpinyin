@@ -27,6 +27,7 @@
 #define SOGOU_KEY_LENGTH 32
 #define QQ_KEY_LENGTH 32
 #define MAX_CACHE_ENTRY 2048
+#define MAX_ERROR 10
 
 #define _(x) dgettext("fcitx-cloudpinyin", (x))
 
@@ -81,6 +82,7 @@ typedef struct _FcitxCloudPinyin
     FcitxCloudPinyinConfig config;
     CURLM* curlm;
     CurlQueue* queue;
+    int errorcount;
     char key[SOGOU_KEY_LENGTH + 1];
     boolean initialized;
     CloudPinyinCache* cache;
