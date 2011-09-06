@@ -122,6 +122,8 @@ void* CloudPinyinCreate(FcitxInstance* instance)
         return NULL;
     }
 
+    curl_multi_setopt(cloudpinyin->curlm, CURLMOPT_MAXCONNECTS, 10l);
+
     cloudpinyin->queue = fcitx_malloc0(sizeof(CurlQueue));
 
     FcitxIMEventHook hook;
@@ -210,6 +212,8 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     curl_easy_setopt(curl, CURLOPT_URL, engine[cloudpinyin->config.source].RequestKey);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20l);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1l);
     curl_multi_add_handle(cloudpinyin->curlm, curl);
     CURLMcode mcode;
     do {
