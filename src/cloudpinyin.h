@@ -84,7 +84,6 @@ typedef struct _FcitxCloudPinyin
     char key[SOGOU_KEY_LENGTH + 1];
     boolean initialized;
     CloudPinyinCache* cache;
-    int counter;
     boolean isrequestkey;
 } FcitxCloudPinyin;
 

@@ -29,8 +29,6 @@
 #include <fcitx-config/xdg.h>
 #include <errno.h>
 
-#define KEY_PRESS_INTERVAL 50
-
 #define LOGLEVEL DEBUG
 
 typedef struct _CloudCandWord {
@@ -63,6 +61,7 @@ static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin);
 static char* SplitHZAndPY(char* string);
+void CloudPinyinOnTriggerOn(void* arg);
 
 void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
 char* SogouParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
@@ -131,6 +130,11 @@ void* CloudPinyinCreate(FcitxInstance* instance)
 
     RegisterUpdateCandidateWordHook(instance, hook);
 
+    hook.arg = cloudpinyin;
+    hook.func = CloudPinyinOnTriggerOn;
+
+    RegisterTriggerOnHook(instance, hook);
+
     CloudPinyinRequestKey(cloudpinyin);
 
     return cloudpinyin;
@@ -143,15 +147,7 @@ void CloudPinyinAddCandidateWord(void* arg)
     FcitxInputState* input = &cloudpinyin->owner->input;
 
     if (cloudpinyin->initialized == false)
-    {
-        if (!cloudpinyin->isrequestkey)
-        {
-            cloudpinyin->counter ++;
-            if (cloudpinyin->counter >= KEY_PRESS_INTERVAL)
-                CloudPinyinRequestKey(cloudpinyin);
-        }
         return;
-    }
 
     /* check whether the current im is pinyin */
     if (strcmp(im->strIconName, "pinyin") == 0 ||
@@ -194,7 +190,6 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     {
         cloudpinyin->initialized = true;
         cloudpinyin->key[0] = '\0';
-        cloudpinyin->counter = 0;
         cloudpinyin->isrequestkey = false;
         return;
     }
@@ -292,7 +287,6 @@ void CloudPinyinReloadConfig(void* arg)
     {
         cloudpinyin->initialized = false;
         cloudpinyin->key[0] = '\0';
-        cloudpinyin->counter = KEY_PRESS_INTERVAL;
     }
 }
 
@@ -343,8 +337,6 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
     if (queue->type == RequestKey)
     {
         cloudpinyin->isrequestkey = false;
-        cloudpinyin->counter = 0;
-
         if (queue->source != cloudpinyin->config.source)
             return;
 
@@ -713,5 +705,14 @@ char* GoogleParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
     return NULL;
 }
 
+
+void CloudPinyinOnTriggerOn(void* arg)
+{
+    FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
+    if (!cloudpinyin->initialized && !cloudpinyin->isrequestkey)
+    {
+        CloudPinyinRequestKey(cloudpinyin);
+    }
+}
 
 // kate: indent-mode cstyle; space-indent on; indent-width 0;
