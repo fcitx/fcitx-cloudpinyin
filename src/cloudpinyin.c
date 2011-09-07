@@ -122,6 +122,8 @@ void* CloudPinyinCreate(FcitxInstance* instance)
         return NULL;
     }
 
+    curl_multi_setopt(cloudpinyin->curlm, CURLMOPT_MAXCONNECTS, 10l);
+
     cloudpinyin->queue = fcitx_malloc0(sizeof(CurlQueue));
 
     FcitxIMEventHook hook;
@@ -210,6 +212,8 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     curl_easy_setopt(curl, CURLOPT_URL, engine[cloudpinyin->config.source].RequestKey);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20l);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1l);
     curl_multi_add_handle(cloudpinyin->curlm, curl);
     CURLMcode mcode;
     do {
@@ -345,10 +349,6 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
             if (engine[cloudpinyin->config.source].ParseKey)
                 engine[cloudpinyin->config.source].ParseKey(cloudpinyin, queue);
         }
-        else
-        {
-            // CloudPinyinRequestKey(cloudpinyin);
-        }
     }
     else if (queue->type == RequestPinyin)
     {
@@ -384,6 +384,17 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                 if (strToFree)
                     free(strToFree);
                 free(realstring);
+            }
+        }
+
+        if (queue->http_code != 200)
+        {
+            cloudpinyin->errorcount ++;
+            if (cloudpinyin->errorcount > MAX_ERROR)
+            {
+                cloudpinyin->initialized = false;
+                cloudpinyin->key[0] = '\0';
+                cloudpinyin->errorcount = 0;
             }
         }
     }
