@@ -4,6 +4,7 @@ include_directories(
     ${FCITX4_FCITX_INCLUDE_DIRS}
     ${FCITX4_FCITX_CONFIG_INCLUDE_DIRS}
     ${FCITX4_FCITX_UTILS_INCLUDE_DIRS}
+    ${LIBINTL_INCLUDE_DIR}
 )
 
 link_directories(
@@ -24,7 +25,9 @@ target_link_libraries( fcitx-cloudpinyin
                        ${FCITX4_FCITX_LIBRARIES}
                        ${FCITX4_FCITX_CONFIG_LIBRARIES}
                        ${FCITX4_FCITX_UTILS_LIBRARIES}
-                       ${CURL_LIBRARIES})
+                       ${CURL_LIBRARIES}
+                       ${LIBINTL_LIBRARIES}
+                       )
 
 fcitx_add_addon_conf_file(fcitx-cloudpinyin.conf)
 fcitx_add_configdesc_file(fcitx-cloudpinyin.desc)
