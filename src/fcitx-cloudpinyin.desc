@@ -8,11 +8,6 @@ Type=Integer
 DefaultValue=10
 Description=Minimum Length of Pinyin To Trigger Cloud Pinyin
 
-[CloudPinyin/UseOriginPinyinOnly]
-Type=Boolean
-DefaultValue=False
-Description=Only use origin Pinyin to query the result
-
 [CloudPinyin/DontShowSource]
 Type=Boolean
 DefaultValue=True

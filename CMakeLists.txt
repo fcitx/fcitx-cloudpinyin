@@ -1,7 +1,7 @@
 project(fcitx-cloudpinyin)
 cmake_minimum_required(VERSION 2.6)
 
-find_package(Fcitx REQUIRED)
+find_package(Fcitx 4.1.1 REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Gettext REQUIRED)
 

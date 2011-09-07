@@ -24,7 +24,6 @@
 CONFIG_BINDING_BEGIN(FcitxCloudPinyinConfig);
 CONFIG_BINDING_REGISTER("CloudPinyin", "CandidateOrder", iCandidateOrder);
 CONFIG_BINDING_REGISTER("CloudPinyin", "MinimumPinyinLength", iMinimumPinyinLength);
-CONFIG_BINDING_REGISTER("CloudPinyin", "UseOriginPinyinOnly", bUsePinyinOnly);
 CONFIG_BINDING_REGISTER("CloudPinyin", "DontShowSource", bDontShowSource);
 CONFIG_BINDING_REGISTER("CloudPinyin", "Source", source);
 CONFIG_BINDING_END();
