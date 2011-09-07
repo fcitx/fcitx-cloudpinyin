@@ -586,19 +586,59 @@ void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
 
 char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
 {
+    FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
     char* string = MessagesToCString(cloudpinyin->owner->input.msgPreedit);
-    char* p = string, *pp = string;
-    while(*p)
+    char p[4096], *pinyin, *lastpos;
+    pinyin = SplitHZAndPY(string);
+    lastpos = pinyin;
+    boolean endflag;
+    strncpy(p, string, pinyin - string);
+    p[pinyin - string] = 0;
+    do
     {
-        if (*p != ' ')
+        endflag = (*pinyin != '\0');
+
+        if (*pinyin == ' ' || *pinyin == '\'' || *pinyin == '\0')
         {
-            *pp = *p;
-            pp ++;
+            *pinyin = 0;
+
+            if (*lastpos != '\0')
+            {
+                char* result = NULL;
+                FcitxModuleFunctionArg arg;
+                arg.args[0] = lastpos;
+                boolean isshuangpin;
+                if (strcmp(im->strIconName, "sunpinyin") == 0)
+                {
+                    boolean issp;
+                    arg.args[1] = &issp;
+                    result = InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 0, arg);
+                    isshuangpin = issp;
+                }
+                else if (strcmp(im->strIconName, "shuangpin") == 0)
+                {
+                    isshuangpin = true;
+                    result = NULL;
+                }
+                if (isshuangpin)
+                {
+                    if (result)
+                    {
+                        strcat(p, result);
+                        free(result);
+                    }
+                }
+                else
+                    strcat(p, lastpos);
+            }
+
+            lastpos = pinyin + 1;
         }
-        p ++;
-    }
-    *pp = 0;
-    return string;
+        pinyin ++;
+
+    } while(endflag);
+    free(string);
+    return strdup(p);
 }
 
 char* SplitHZAndPY(char* string)
