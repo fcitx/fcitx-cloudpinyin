@@ -7,9 +7,6 @@ include_directories(
 
 link_directories(
     ${CURL_LIBRARY_DIRS}
-    ${FCITX4_FCITX_LIBRARY_DIRS}
-    ${FCITX4_FCITX_CONFIG_LIBRARY_DIRS}
-    ${FCITX4_FCITX_UTILS_LIBRARY_DIRS}
 )
 
 set(FCITX_CLOUDPINYIN_SRCS
@@ -20,9 +17,6 @@ set(FCITX_CLOUDPINYIN_SRCS
 fcitx_add_addon(fcitx-cloudpinyin ${FCITX_CLOUDPINYIN_SRCS})
 add_definitions( -DLOCALEDIR=\"${CMAKE_INSTALL_PREFIX}/share/locale\" -D_GNU_SOURCE )
 target_link_libraries( fcitx-cloudpinyin
-                       ${FCITX4_FCITX_LIBRARIES}
-                       ${FCITX4_FCITX_CONFIG_LIBRARIES}
-                       ${FCITX4_FCITX_UTILS_LIBRARIES}
                        ${CURL_LIBRARIES})
 
 fcitx_add_addon_conf_file(fcitx-cloudpinyin.conf)
