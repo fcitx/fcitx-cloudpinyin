@@ -37,7 +37,8 @@ typedef enum _CloudPinyinSource
 {
     CloudPinyin_Sogou = 0,
     CloudPinyin_QQ = 1,
-    CloudPinyin_Google = 2
+    CloudPinyin_Google = 2,
+    CloudPinyin_Baidu = 3
 } CloudPinyinSource;
 
 typedef enum _CloudPinyinRequestType

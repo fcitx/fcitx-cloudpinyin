@@ -17,10 +17,11 @@ Description=Don't Show the 'via cloud' hint
 Type=Enum
 DefaultValue=Sogou
 Description=Cloud Pinyin Source
-EnumCount=3
+EnumCount=4
 Enum0=Sogou
 Enum1=QQ
 Enum2=Google
+Enum3=Baidu
 
 [DescriptionFile]
 LocaleDomain=fcitx-cloudpinyin

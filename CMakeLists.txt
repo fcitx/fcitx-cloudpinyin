@@ -6,6 +6,7 @@ find_package(Fcitx 4.1.1 REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(Libintl REQUIRED)
+find_package(Libiconv REQUIRED)
 
 # uninstall target
 configure_file(
