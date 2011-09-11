@@ -564,6 +564,18 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
             *py = 0;
 
             snprintf(GetOutputString(&cloudpinyin->owner->input), MAX_USER_INPUT, "%s%s", string, candWord->strWord);
+
+            FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
+            FcitxModuleFunctionArg args;
+            args.args[0] = GetOutputString(&cloudpinyin->owner->input);
+            if (strcmp(im->strIconName, "sunpinyin") == 0)
+            {
+                //InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
+            }
+            else if (strcmp(im->strIconName, "shuangpin") == 0 || strcmp(im->strIconName, "pinyin") == 0)
+            {
+                InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
+            }
         }
         if (string)
             free(string);
