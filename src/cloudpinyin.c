@@ -181,7 +181,7 @@ void CloudPinyinAddCandidateWord(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
     FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
-    FcitxInputState* input = &cloudpinyin->owner->input;
+    FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
 
     if (cloudpinyin->initialized == false)
         return;
@@ -190,7 +190,7 @@ void CloudPinyinAddCandidateWord(void* arg)
     if (CHECK_VALID_IM)
     {
         /* there is something pending input */
-        if (strlen(input->strCodeInput) >= cloudpinyin->config.iMinimumPinyinLength)
+        if (FcitxInputStateGetRawInputBufferSize(input) >= cloudpinyin->config.iMinimumPinyinLength)
         {
             char* strToFree = NULL, *inputString;
             strToFree = GetCurrentString(cloudpinyin);
@@ -263,9 +263,13 @@ void CloudPinyinSetFD(void* arg)
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
     FcitxInstance* instance = cloudpinyin->owner;
     int maxfd = 0;
-    curl_multi_fdset(cloudpinyin->curlm, &instance->rfds, &instance->wfds, &instance->efds, &maxfd);
-    if (maxfd > instance->maxfd)
-        instance->maxfd = maxfd;
+    curl_multi_fdset(cloudpinyin->curlm,
+                     FcitxInstanceGetReadFDSet(instance),
+                     FcitxInstanceGetWriteFDSet(instance),
+                     FcitxInstanceGetExceptFDSet(instance),
+                     &maxfd);
+    if (maxfd > FcitxInstanceGetMaxFD(instance))
+        FcitxInstanceSetMaxFD(instance, maxfd);
 }
 
 void CloudPinyinProcessEvent(void* arg)
@@ -493,6 +497,7 @@ CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const cha
 void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
 {
     CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, pinyin);
+    FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
 
     CandidateWord candWord;
     CloudCandWord* cloudCand = fcitx_malloc0(sizeof(CloudCandWord));
@@ -519,19 +524,19 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     if (order < 0)
         order = 0;
 
-    CandidateWordInsert(cloudpinyin->owner->input.candList, &candWord, order);
+    CandidateWordInsert(FcitxInputStateGetCandidateList(input), &candWord, order);
 }
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
 {
     CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, pinyin);
-    FcitxInputState* input = &cloudpinyin->owner->input;
+    FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     if (cacheEntry)
     {
         CandidateWord* candWord;
-        for (candWord = CandidateWordGetFirst(input->candList);
+        for (candWord = CandidateWordGetFirst(FcitxInputStateGetCandidateList(input));
                 candWord != NULL;
-                candWord = CandidateWordGetNext(input->candList, candWord))
+                candWord = CandidateWordGetNext(FcitxInputStateGetCandidateList(input), candWord))
         {
             if (candWord->owner == cloudpinyin)
                 break;
@@ -555,6 +560,7 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
     CloudCandWord* cloudCand = candWord->priv;
+    FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     if (cloudCand->filled)
     {
         char* string = GetCurrentString(cloudpinyin);
@@ -563,11 +569,11 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
         {
             *py = 0;
 
-            snprintf(GetOutputString(&cloudpinyin->owner->input), MAX_USER_INPUT, "%s%s", string, candWord->strWord);
+            snprintf(GetOutputString(input), MAX_USER_INPUT, "%s%s", string, candWord->strWord);
 
             FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
             FcitxModuleFunctionArg args;
-            args.args[0] = GetOutputString(&cloudpinyin->owner->input);
+            args.args[0] = GetOutputString(input);
             if (strcmp(im->strIconName, "sunpinyin") == 0)
             {
                 //InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
@@ -631,7 +637,8 @@ void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
 char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
 {
     FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
-    char* string = MessagesToCString(cloudpinyin->owner->input.msgPreedit);
+    FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
+    char* string = MessagesToCString(FcitxInputStateGetPreedit(input));
     char p[MAX_USER_INPUT + 1], *pinyin, *lastpos;
     pinyin = SplitHZAndPY(string);
     lastpos = pinyin;
