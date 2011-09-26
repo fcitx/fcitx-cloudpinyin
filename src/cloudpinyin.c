@@ -31,10 +31,11 @@
 #include <errno.h>
 #include <iconv.h>
 
-#define CHECK_VALID_IM (strcmp(im->strIconName, "pinyin") == 0 || \
-                        strcmp(im->strIconName, "googlepinyin") == 0 || \
-                        strcmp(im->strIconName, "sunpinyin") == 0 || \
-                        strcmp(im->strIconName, "shuangpin") == 0)
+#define CHECK_VALID_IM (im && \
+                        (strcmp(im->uniqueName, "pinyin") == 0 || \
+                        strcmp(im->uniqueName, "googlepinyin") == 0 || \
+                        strcmp(im->uniqueName, "sunpinyin") == 0 || \
+                        strcmp(im->uniqueName, "shuangpin") == 0))
 
 #define LOGLEVEL DEBUG
 
@@ -577,13 +578,16 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
             FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
             FcitxModuleFunctionArg args;
             args.args[0] = GetOutputString(input);
-            if (strcmp(im->strIconName, "sunpinyin") == 0)
+            if (im)
             {
-                //InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
-            }
-            else if (strcmp(im->strIconName, "shuangpin") == 0 || strcmp(im->strIconName, "pinyin") == 0)
-            {
-                InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
+                if (strcmp(im->strIconName, "sunpinyin") == 0)
+                {
+                    //InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
+                }
+                else if (strcmp(im->strIconName, "shuangpin") == 0 || strcmp(im->strIconName, "pinyin") == 0)
+                {
+                    InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
+                }
             }
         }
         if (string)
@@ -640,6 +644,8 @@ void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
 char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
 {
     FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
+    if (!im)
+        return NULL;
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     char* string = MessagesToCString(FcitxInputStateGetPreedit(input));
     char p[MAX_USER_INPUT + 1], *pinyin, *lastpos;
