@@ -519,10 +519,13 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     candWord.callback = CloudPinyinGetCandWord;
     candWord.owner = cloudpinyin;
     candWord.priv = cloudCand;
+    candWord.wordType = MSG_TIPS;
     if (cloudpinyin->config.bDontShowSource)
         candWord.strExtra = NULL;
-    else
+    else {
         candWord.strExtra = strdup(_(" (via cloud)"));
+        candWord.wordType = MSG_TIPS;
+    }
 
     int order = cloudpinyin->config.iCandidateOrder - 1;
     if (order < 0)
