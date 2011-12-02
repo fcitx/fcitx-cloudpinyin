@@ -354,7 +354,7 @@ void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPi
         asprintf(&url, engine[cloudpinyin->config.source].RequestPinyin, cloudpinyin->key, urlstring);
     else
         asprintf(&url, engine[cloudpinyin->config.source].RequestPinyin, urlstring);
-    free(urlstring);
+    curl_free(urlstring);
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
@@ -775,7 +775,9 @@ char* SogouParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
         {
             size_t length = end - start;
             int conv_length;
-            char *realstring = curl_easy_unescape(queue->curl, start, length, &conv_length);
+            char *unescapedstring = curl_easy_unescape(queue->curl, start, length, &conv_length);
+            char *realstring = strdup(unescapedstring);
+            curl_free(unescapedstring);
             return realstring;
         }
     }
