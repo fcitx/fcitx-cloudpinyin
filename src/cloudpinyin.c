@@ -519,10 +519,13 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     candWord.callback = CloudPinyinGetCandWord;
     candWord.owner = cloudpinyin;
     candWord.priv = cloudCand;
+    candWord.wordType = MSG_TIPS;
     if (cloudpinyin->config.bDontShowSource)
         candWord.strExtra = NULL;
-    else
+    else {
         candWord.strExtra = strdup(_(" (via cloud)"));
+        candWord.wordType = MSG_TIPS;
+    }
 
     int order = cloudpinyin->config.iCandidateOrder - 1;
     if (order < 0)
@@ -580,11 +583,11 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
             args.args[0] = GetOutputString(input);
             if (im)
             {
-                if (strcmp(im->strIconName, "sunpinyin") == 0)
+                if (strcmp(im->uniqueName, "sunpinyin") == 0)
                 {
                     //InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
                 }
-                else if (strcmp(im->strIconName, "shuangpin") == 0 || strcmp(im->strIconName, "pinyin") == 0)
+                else if (strcmp(im->uniqueName, "shuangpin") == 0 || strcmp(im->uniqueName, "pinyin") == 0)
                 {
                     InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
                 }
@@ -670,14 +673,14 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
                 FcitxModuleFunctionArg arg;
                 arg.args[0] = lastpos;
                 boolean isshuangpin = false;
-                if (strcmp(im->strIconName, "sunpinyin") == 0)
+                if (strcmp(im->uniqueName, "sunpinyin") == 0)
                 {
                     boolean issp = false;
                     arg.args[1] = &issp;
                     result = InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 0, arg);
                     isshuangpin = issp;
                 }
-                else if (strcmp(im->strIconName, "shuangpin") == 0)
+                else if (strcmp(im->uniqueName, "shuangpin") == 0)
                 {
                     isshuangpin = true;
                     result = InvokeFunction(cloudpinyin->owner, FCITX_PINYIN, SP2QP, arg);
