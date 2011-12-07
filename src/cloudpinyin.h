@@ -69,7 +69,7 @@ typedef struct _CloudPinyinCache
 
 typedef struct _FcitxCloudPinyinConfig
 {
-    GenericConfig config;
+    FcitxGenericConfig config;
     int iCandidateOrder;
     int iMinimumPinyinLength;
     boolean bDontShowSource;

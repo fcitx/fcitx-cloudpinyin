@@ -62,7 +62,7 @@ static void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* qu
 static size_t CloudPinyinWriteFunction(char *ptr, size_t size, size_t nmemb, void *userdata);
 static CloudPinyinCache* CloudPinyinCacheLookup(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const char* pinyin, char* string);
-static INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord);
+static INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWord);
 static void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
@@ -141,7 +141,7 @@ static inline unsigned char tohex(char ch)
 
 void* CloudPinyinCreate(FcitxInstance* instance)
 {
-    FcitxCloudPinyin* cloudpinyin = fcitx_malloc0(sizeof(FcitxCloudPinyin));
+    FcitxCloudPinyin* cloudpinyin = fcitx_utils_malloc0(sizeof(FcitxCloudPinyin));
     bindtextdomain("fcitx-cloudpinyin", LOCALEDIR);
     cloudpinyin->owner = instance;
 
@@ -160,21 +160,21 @@ void* CloudPinyinCreate(FcitxInstance* instance)
 
     curl_multi_setopt(cloudpinyin->curlm, CURLMOPT_MAXCONNECTS, 10l);
 
-    cloudpinyin->queue = fcitx_malloc0(sizeof(CurlQueue));
+    cloudpinyin->queue = fcitx_utils_malloc0(sizeof(CurlQueue));
 
     FcitxIMEventHook hook;
     hook.arg = cloudpinyin;
     hook.func = CloudPinyinAddCandidateWord;
 
-    RegisterUpdateCandidateWordHook(instance, hook);
+    FcitxInstanceRegisterUpdateCandidateWordHook(instance, hook);
 
     hook.arg = cloudpinyin;
     hook.func = CloudPinyinHookForNewRequest;
 
-    RegisterResetInputHook(instance, hook);
-    RegisterInputFocusHook(instance, hook);
-    RegisterInputUnFocusHook(instance, hook);
-    RegisterTriggerOnHook(instance, hook);
+    FcitxInstanceRegisterResetInputHook(instance, hook);
+    FcitxInstanceRegisterInputFocusHook(instance, hook);
+    FcitxInstanceRegisterInputUnFocusHook(instance, hook);
+    FcitxInstanceRegisterTriggerOnHook(instance, hook);
 
     CloudPinyinRequestKey(cloudpinyin);
 
@@ -184,7 +184,7 @@ void* CloudPinyinCreate(FcitxInstance* instance)
 void CloudPinyinAddCandidateWord(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
-    FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
+    FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
 
     if (cloudpinyin->initialized == false)
@@ -234,7 +234,7 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     CURL* curl = curl_easy_init();
     if (!curl)
         return;
-    CurlQueue* queue = fcitx_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->queue;
+    CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->queue;
     queue->curl = curl;
     queue->next = NULL;
 
@@ -338,7 +338,7 @@ void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPi
     CURL* curl = curl_easy_init();
     if (!curl)
         return;
-    CurlQueue* queue = fcitx_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->queue;
+    CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->queue;
     queue->curl = curl;
     queue->next = NULL;
 
@@ -398,7 +398,7 @@ void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                 if (cacheEntry == NULL)
                     cacheEntry = CloudPinyinAddToCache(cloudpinyin, queue->pinyin, realstring);
 
-                FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
+                FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
 
                 char* strToFree = NULL, *inputString;
                 strToFree = GetCurrentString(cloudpinyin);
@@ -462,7 +462,7 @@ size_t CloudPinyinWriteFunction(char *ptr, size_t size, size_t nmemb, void *user
     if (queue->str != NULL)
         queue->str = realloc(queue->str, queue->size + realsize + 1);
     else
-        queue->str = fcitx_malloc0(realsize + 1);
+        queue->str = fcitx_utils_malloc0(realsize + 1);
 
     if (queue->str != NULL) {
         memcpy(&(queue->str[queue->size]), ptr, realsize);
@@ -481,7 +481,7 @@ CloudPinyinCache* CloudPinyinCacheLookup(FcitxCloudPinyin* cloudpinyin, const ch
 
 CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const char* pinyin, char* string)
 {
-    CloudPinyinCache* cacheEntry = fcitx_malloc0(sizeof(CloudPinyinCache));
+    CloudPinyinCache* cacheEntry = fcitx_utils_malloc0(sizeof(CloudPinyinCache));
     cacheEntry->pinyin = strdup(pinyin);
     cacheEntry->str = strdup(string);
     HASH_ADD_KEYPTR(hh, cloudpinyin->cache, cacheEntry->pinyin, strlen(cacheEntry->pinyin), cacheEntry);
@@ -503,8 +503,8 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, pinyin);
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
 
-    CandidateWord candWord;
-    CloudCandWord* cloudCand = fcitx_malloc0(sizeof(CloudCandWord));
+    FcitxCandidateWord candWord;
+    CloudCandWord* cloudCand = fcitx_utils_malloc0(sizeof(CloudCandWord));
     if (cacheEntry)
     {
         cloudCand->filled = true;
@@ -531,7 +531,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     if (order < 0)
         order = 0;
 
-    CandidateWordInsert(FcitxInputStateGetCandidateList(input), &candWord, order);
+    FcitxCandidateWordInsert(FcitxInputStateGetCandidateList(input), &candWord, order);
 }
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
@@ -540,10 +540,10 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     if (cacheEntry)
     {
-        CandidateWord* candWord;
-        for (candWord = CandidateWordGetFirst(FcitxInputStateGetCandidateList(input));
+        FcitxCandidateWord* candWord;
+        for (candWord = FcitxCandidateWordGetFirst(FcitxInputStateGetCandidateList(input));
                 candWord != NULL;
-                candWord = CandidateWordGetNext(FcitxInputStateGetCandidateList(input), candWord))
+                candWord = FcitxCandidateWordGetNext(FcitxInputStateGetCandidateList(input), candWord))
         {
             if (candWord->owner == cloudpinyin)
                 break;
@@ -557,13 +557,13 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
                 cloudCand->filled = true;
                 free(candWord->strWord);
                 candWord->strWord = strdup(cacheEntry->str);
-                UpdateInputWindow(cloudpinyin->owner);
+                FcitxUIUpdateInputWindow(cloudpinyin->owner);
             }
         }
     }
 }
 
-INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
+INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWord)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
     CloudCandWord* cloudCand = candWord->priv;
@@ -576,11 +576,11 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
         {
             *py = 0;
 
-            snprintf(GetOutputString(input), MAX_USER_INPUT, "%s%s", string, candWord->strWord);
+            snprintf(FcitxInputStateGetOutputString(input), MAX_USER_INPUT, "%s%s", string, candWord->strWord);
 
-            FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
+            FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
             FcitxModuleFunctionArg args;
-            args.args[0] = GetOutputString(input);
+            args.args[0] = FcitxInputStateGetOutputString(input);
             if (im)
             {
                 if (strcmp(im->uniqueName, "sunpinyin") == 0)
@@ -589,7 +589,7 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
                 }
                 else if (strcmp(im->uniqueName, "shuangpin") == 0 || strcmp(im->uniqueName, "pinyin") == 0)
                 {
-                    InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
+                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
                 }
             }
         }
@@ -609,20 +609,20 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, CandidateWord* candWord)
  **/
 boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
 {
-    ConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
+    FcitxConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
     if (configDesc == NULL)
         return false;
 
-    FILE *fp = GetXDGFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "rt", NULL);
+    FILE *fp = FcitxXDGGetFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "rt", NULL);
 
     if (!fp)
     {
         if (errno == ENOENT)
             SaveCloudPinyinConfig(fs);
     }
-    ConfigFile *cfile = ParseConfigFileFp(fp, configDesc);
+    FcitxConfigFile *cfile = FcitxConfigParseConfigFileFp(fp, configDesc);
     FcitxCloudPinyinConfigConfigBind(fs, cfile, configDesc);
-    ConfigBindSync(&fs->config);
+    FcitxConfigBindSync(&fs->config);
 
     if (fp)
         fclose(fp);
@@ -637,20 +637,20 @@ boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
  **/
 void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
 {
-    ConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
-    FILE *fp = GetXDGFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "wt", NULL);
-    SaveConfigFileFp(fp, &fs->config, configDesc);
+    FcitxConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
+    FILE *fp = FcitxXDGGetFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "wt", NULL);
+    FcitxConfigSaveConfigFileFp(fp, &fs->config, configDesc);
     if (fp)
         fclose(fp);
 }
 
 char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
 {
-    FcitxIM* im = GetCurrentIM(cloudpinyin->owner);
+    FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
     if (!im)
         return NULL;
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
-    char* string = MessagesToCString(FcitxInputStateGetPreedit(input));
+    char* string = FcitxUIMessagesToCString(FcitxInputStateGetPreedit(input));
     char p[MAX_USER_INPUT + 1], *pinyin, *lastpos;
     pinyin = SplitHZAndPY(string);
     lastpos = pinyin;
@@ -677,7 +677,7 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
                 {
                     boolean issp = false;
                     arg.args[1] = &issp;
-                    result = InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 0, arg);
+                    result = FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sunpinyin", 0, arg);
                     isshuangpin = issp;
                 }
                 else if (strcmp(im->uniqueName, "shuangpin") == 0)
@@ -741,7 +741,7 @@ char* SplitHZAndPY(char* string)
         char* p;
         int chr;
 
-        p = utf8_get_char(s, &chr);
+        p = fcitx_utf8_get_char(s, &chr);
         if (p - s == 1)
             break;
         s = p;
@@ -752,7 +752,7 @@ char* SplitHZAndPY(char* string)
 
 void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
 {
-    char* str = fcitx_trim(queue->str);
+    char* str = fcitx_utils_trim(queue->str);
     const char* ime_patch_key = "ime_patch_key = \"";
     size_t len = strlen(str);
     if (len == SOGOU_KEY_LENGTH + strlen(ime_patch_key) + 1
@@ -789,7 +789,7 @@ char* SogouParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
 
 void QQParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
 {
-    char* str = fcitx_trim(queue->str);
+    char* str = fcitx_utils_trim(queue->str);
     const char* ime_patch_key = "{\"key\":\"";
     if (strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0)
     {
@@ -812,7 +812,7 @@ char* QQParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
         if ((end = strstr(start, "\"")) != NULL)
         {
             size_t length = end - start;
-            char *realstring = fcitx_malloc0(sizeof(char) * (length + 1));
+            char *realstring = fcitx_utils_malloc0(sizeof(char) * (length + 1));
             strncpy(realstring, start, length);
             realstring[length] = '\0';
             return realstring;
@@ -830,7 +830,7 @@ char* GoogleParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
         if ((end = strstr(start, "\"")) != NULL)
         {
             size_t length = end - start;
-            char *realstring = fcitx_malloc0(sizeof(char) * (length + 1));
+            char *realstring = fcitx_utils_malloc0(sizeof(char) * (length + 1));
             strncpy(realstring, start, length);
             realstring[length] = '\0';
             return realstring;
@@ -858,7 +858,7 @@ char* BaiduParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                 return NULL;
 
             size_t i = 0, j = 0;
-            char* buf = fcitx_malloc0((length / 6 + 1) * 2);
+            char* buf = fcitx_utils_malloc0((length / 6 + 1) * 2);
             while (i < length)
             {
                 if (start[i] == '\\' && start[i+1] == 'u')
@@ -883,12 +883,12 @@ char* BaiduParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
             buf[j++] = 0;
             buf[j++] = 0;
             size_t len = UTF8_MAX_LENGTH * (length / 6) * sizeof(char);
-            char* realstring = fcitx_malloc0(UTF8_MAX_LENGTH * (length / 6) * sizeof(char));
+            char* realstring = fcitx_utils_malloc0(UTF8_MAX_LENGTH * (length / 6) * sizeof(char));
             char* p = buf, *pp = realstring;
             iconv(conv, &p, &j, &pp, &len);
 
             free(buf);
-            if (utf8_check_string(realstring))
+            if (fcitx_utf8_check_string(realstring))
                 return realstring;
             else
             {
