@@ -33,7 +33,8 @@
 
 #define CHECK_VALID_IM (im && \
                         (strcmp(im->uniqueName, "pinyin") == 0 || \
-                        strcmp(im->uniqueName, "libpinyin") == 0 || \
+                        strcmp(im->uniqueName, "pinyin-libpinyin") == 0 || \
+                        strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 || \
                         strcmp(im->uniqueName, "googlepinyin") == 0 || \
                         strcmp(im->uniqueName, "sunpinyin") == 0 || \
                         strcmp(im->uniqueName, "shuangpin") == 0))
