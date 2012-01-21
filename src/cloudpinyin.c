@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011~2011 by CSSlayer                                   *
+ *   Copyright (C) 2011~2012 by CSSlayer                                   *
  *   wengxt@gmail.com                                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -23,6 +23,7 @@
 #include <unistd.h>
 
 #include <curl/curl.h>
+#include <fcntl.h>
 
 #include <fcitx/fcitx.h>
 #include <fcitx/module.h>
@@ -43,6 +44,8 @@
                         strcmp(im->uniqueName, "googlepinyin") == 0 || \
                         strcmp(im->uniqueName, "sunpinyin") == 0 || \
                         strcmp(im->uniqueName, "shuangpin") == 0))
+                        
+#define CLOUDPINYIN_CHECK_PAGE_NUMBER 3
 
 #define LOGLEVEL DEBUG
 
@@ -160,13 +163,6 @@ void* CloudPinyinCreate(FcitxInstance* instance)
         return NULL;
     }
 
-    cloudpinyin->curlm = curl_multi_init();
-    if (cloudpinyin->curlm == NULL)
-    {
-        free(cloudpinyin);
-        return NULL;
-    }
-
     if (pipe(pipe1) < 0)
     {
         free(cloudpinyin);
@@ -180,10 +176,13 @@ void* CloudPinyinCreate(FcitxInstance* instance)
         return NULL;
     }
 
-    cloudpinyin->pipeRecv = pipe1[1];
-    cloudpinyin->pipeNotify = pipe2[0];
-
-    curl_multi_setopt(cloudpinyin->curlm, CURLMOPT_MAXCONNECTS, 10l);
+    cloudpinyin->pipeRecv = pipe1[0];
+    cloudpinyin->pipeNotify = pipe2[1];
+    
+    fcntl(pipe1[0], F_SETFL, O_NONBLOCK);
+    fcntl(pipe1[1], F_SETFL, O_NONBLOCK);
+    fcntl(pipe2[0], F_SETFL, O_NONBLOCK);
+    fcntl(pipe2[1], F_SETFL, O_NONBLOCK);
 
     cloudpinyin->pendingQueue = fcitx_utils_malloc0(sizeof(CurlQueue));
     cloudpinyin->finishQueue = fcitx_utils_malloc0(sizeof(CurlQueue));
@@ -193,11 +192,11 @@ void* CloudPinyinCreate(FcitxInstance* instance)
     FcitxFetchThread* fetch = fcitx_utils_malloc0(sizeof(FcitxFetchThread));
     cloudpinyin->fetch = fetch;
     fetch->owner = cloudpinyin;
-    fetch->curlm = cloudpinyin->curlm;
-    fetch->pipeRecv = pipe2[1];
-    fetch->pipeNotify = pipe1[0];
+    fetch->pipeRecv = pipe2[0];
+    fetch->pipeNotify = pipe1[1];
     fetch->pendingQueueLock = &cloudpinyin->pendingQueueLock;
     fetch->finishQueueLock = &cloudpinyin->finishQueueLock;
+    fetch->queue = fcitx_utils_malloc0(sizeof(CurlQueue));
 
     FcitxIMEventHook hook;
     hook.arg = cloudpinyin;
@@ -212,6 +211,8 @@ void* CloudPinyinCreate(FcitxInstance* instance)
     FcitxInstanceRegisterInputFocusHook(instance, hook);
     FcitxInstanceRegisterInputUnFocusHook(instance, hook);
     FcitxInstanceRegisterTriggerOnHook(instance, hook);
+    
+    pthread_create(&cloudpinyin->pid, NULL, FetchThread, fetch);
 
     CloudPinyinRequestKey(cloudpinyin);
 
@@ -280,6 +281,7 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20l);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1l);
 
     /* push into pending queue */
     pthread_mutex_lock(&cloudpinyin->pendingQueueLock);
@@ -501,6 +503,24 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
 {
     CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, pinyin);
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
+    struct _FcitxCandidateWordList* candList = FcitxInputStateGetCandidateList(input);
+    
+    if (cacheEntry) {
+        FcitxCandidateWord* cand;
+        /* only check the first three page */
+        int size = FcitxCandidateWordGetPageSize(candList) * CLOUDPINYIN_CHECK_PAGE_NUMBER;
+        int i = 0;
+        for (cand = FcitxCandidateWordGetFirst(FcitxInputStateGetCandidateList(input));
+             cand != NULL;
+             cand = FcitxCandidateWordGetNext(FcitxInputStateGetCandidateList(input), cand))
+        {
+            if (strcmp(cand->strWord, cacheEntry->str) == 0)
+                return;
+            i ++;
+            if (i >= size)
+                break;
+        }
+    }
 
     FcitxCandidateWord candWord;
     CloudCandWord* cloudCand = fcitx_utils_malloc0(sizeof(CloudCandWord));
@@ -530,24 +550,43 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     if (order < 0)
         order = 0;
 
-    FcitxCandidateWordInsert(FcitxInputStateGetCandidateList(input), &candWord, order);
+    FcitxCandidateWordInsert(candList, &candWord, order);
 }
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
 {
     CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, pinyin);
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
+    struct _FcitxCandidateWordList* candList = FcitxInputStateGetCandidateList(input);
     if (cacheEntry)
     {
         FcitxCandidateWord* candWord;
-        for (candWord = FcitxCandidateWordGetFirst(FcitxInputStateGetCandidateList(input));
-                candWord != NULL;
-                candWord = FcitxCandidateWordGetNext(FcitxInputStateGetCandidateList(input), candWord))
+        for (candWord = FcitxCandidateWordGetFirst(candList);
+             candWord != NULL;
+             candWord = FcitxCandidateWordGetNext(candList, candWord))
         {
             if (candWord->owner == cloudpinyin)
                 break;
         }
 
+        FcitxCandidateWord* cand;
+        int i = 0;
+        int size = FcitxCandidateWordGetPageSize(candList) * CLOUDPINYIN_CHECK_PAGE_NUMBER;
+        for (cand = FcitxCandidateWordGetFirst(candList);
+             cand != NULL;
+             cand = FcitxCandidateWordGetNext(candList, cand))
+        {
+            if (strcmp(cand->strWord, cacheEntry->str) == 0) {
+                FcitxCandidateWordRemove(candList, candWord);
+                FcitxUIUpdateInputWindow(cloudpinyin->owner);
+                candWord = NULL;
+                break;
+            }
+            i ++;
+            if (i >= size)
+                break;
+        }
+        
         if (candWord)
         {
             CloudCandWord* cloudCand = candWord->priv;

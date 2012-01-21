@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011~2011 by CSSlayer                                   *
+ *   Copyright (C) 2011~2012 by CSSlayer                                   *
  *   wengxt@gmail.com                                                      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -80,7 +80,6 @@ typedef struct _FcitxCloudPinyin
 {
     struct _FcitxInstance* owner;
     FcitxCloudPinyinConfig config;
-    CURLM* curlm;
     CurlQueue* pendingQueue;
     CurlQueue* finishQueue;
 
@@ -95,6 +94,8 @@ typedef struct _FcitxCloudPinyin
     CloudPinyinCache* cache;
     boolean isrequestkey;
     struct _FcitxFetchThread* fetch;
+    
+    pthread_t pid;
 } FcitxCloudPinyin;
 
 CONFIG_BINDING_DECLARE(FcitxCloudPinyinConfig);
