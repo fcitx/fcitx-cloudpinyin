@@ -81,12 +81,20 @@ typedef struct _FcitxCloudPinyin
     struct _FcitxInstance* owner;
     FcitxCloudPinyinConfig config;
     CURLM* curlm;
-    CurlQueue* queue;
+    CurlQueue* pendingQueue;
+    CurlQueue* finishQueue;
+
+    pthread_mutex_t pendingQueueLock;
+    pthread_mutex_t finishQueueLock;
+
+    int pipeNotify;
+    int pipeRecv;
     int errorcount;
     char key[SOGOU_KEY_LENGTH + 1];
     boolean initialized;
     CloudPinyinCache* cache;
     boolean isrequestkey;
+    struct _FcitxFetchThread* fetch;
 } FcitxCloudPinyin;
 
 CONFIG_BINDING_DECLARE(FcitxCloudPinyinConfig);

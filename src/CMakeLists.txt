@@ -14,6 +14,7 @@ link_directories(
 set(FCITX_CLOUDPINYIN_SRCS
     cloudpinyin.c
     cloudpinyinconifg.c
+    fetch.c
 )
 
 fcitx_add_addon(fcitx-cloudpinyin ${FCITX_CLOUDPINYIN_SRCS})

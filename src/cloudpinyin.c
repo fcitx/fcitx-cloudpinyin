@@ -18,18 +18,23 @@
  *   51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.              *
  ***************************************************************************/
 
+#include <errno.h>
+#include <iconv.h>
+#include <unistd.h>
+
+#include <curl/curl.h>
+
 #include <fcitx/fcitx.h>
 #include <fcitx/module.h>
 #include <fcitx/instance.h>
 #include <fcitx/hook.h>
-#include <curl/curl.h>
-#include "cloudpinyin.h"
 #include <fcitx-utils/log.h>
 #include <fcitx/candidate.h>
 #include <fcitx-config/xdg.h>
 #include <fcitx/module/pinyin/pydef.h>
-#include <errno.h>
-#include <iconv.h>
+
+#include "cloudpinyin.h"
+#include "fetch.h"
 
 #define CHECK_VALID_IM (im && \
                         (strcmp(im->uniqueName, "pinyin") == 0 || \
@@ -60,7 +65,7 @@ static void CloudPinyinReloadConfig(void* arg);
 static void CloudPinyinAddCandidateWord(void* arg);
 static void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin);
 static void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPinyin);
-static void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+static void CloudPinyinHandleRequest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
 static size_t CloudPinyinWriteFunction(char *ptr, size_t size, size_t nmemb, void *userdata);
 static CloudPinyinCache* CloudPinyinCacheLookup(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const char* pinyin, char* string);
@@ -146,6 +151,8 @@ void* CloudPinyinCreate(FcitxInstance* instance)
     FcitxCloudPinyin* cloudpinyin = fcitx_utils_malloc0(sizeof(FcitxCloudPinyin));
     bindtextdomain("fcitx-cloudpinyin", LOCALEDIR);
     cloudpinyin->owner = instance;
+    int pipe1[2];
+    int pipe2[2];
 
     if (!LoadCloudPinyinConfig(&cloudpinyin->config))
     {
@@ -160,9 +167,37 @@ void* CloudPinyinCreate(FcitxInstance* instance)
         return NULL;
     }
 
+    if (pipe(pipe1) < 0)
+    {
+        free(cloudpinyin);
+        return NULL;
+    }
+
+    if (pipe(pipe2) < 0) {
+        close(pipe1[0]);
+        close(pipe1[1]);
+        free(cloudpinyin);
+        return NULL;
+    }
+
+    cloudpinyin->pipeRecv = pipe1[1];
+    cloudpinyin->pipeNotify = pipe2[0];
+
     curl_multi_setopt(cloudpinyin->curlm, CURLMOPT_MAXCONNECTS, 10l);
 
-    cloudpinyin->queue = fcitx_utils_malloc0(sizeof(CurlQueue));
+    cloudpinyin->pendingQueue = fcitx_utils_malloc0(sizeof(CurlQueue));
+    cloudpinyin->finishQueue = fcitx_utils_malloc0(sizeof(CurlQueue));
+    pthread_mutex_init(&cloudpinyin->pendingQueueLock, NULL);
+    pthread_mutex_init(&cloudpinyin->finishQueueLock, NULL);
+
+    FcitxFetchThread* fetch = fcitx_utils_malloc0(sizeof(FcitxFetchThread));
+    cloudpinyin->fetch = fetch;
+    fetch->owner = cloudpinyin;
+    fetch->curlm = cloudpinyin->curlm;
+    fetch->pipeRecv = pipe2[1];
+    fetch->pipeNotify = pipe1[0];
+    fetch->pendingQueueLock = &cloudpinyin->pendingQueueLock;
+    fetch->finishQueueLock = &cloudpinyin->finishQueueLock;
 
     FcitxIMEventHook hook;
     hook.arg = cloudpinyin;
@@ -220,7 +255,6 @@ void CloudPinyinAddCandidateWord(void* arg)
 
 void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
 {
-    int still_running;
     if (cloudpinyin->isrequestkey)
         return;
 
@@ -236,13 +270,9 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     CURL* curl = curl_easy_init();
     if (!curl)
         return;
-    CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->queue;
+    CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->pendingQueue;
     queue->curl = curl;
     queue->next = NULL;
-
-    while (head->next != NULL)
-        head = head->next;
-    head->next = queue;
     queue->type = RequestKey;
     queue->source = cloudpinyin->config.source;
 
@@ -250,16 +280,16 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20l);
-    curl_multi_add_handle(cloudpinyin->curlm, curl);
-    CURLMcode mcode;
-    do {
-        mcode = curl_multi_perform(cloudpinyin->curlm, &still_running);
-    } while (mcode == CURLM_CALL_MULTI_PERFORM);
 
-    if (mcode != CURLM_OK)
-    {
-        FcitxLog(ERROR, "curl error");
-    }
+    /* push into pending queue */
+    pthread_mutex_lock(&cloudpinyin->pendingQueueLock);
+    while (head->next != NULL)
+        head = head->next;
+    head->next = queue;
+    pthread_mutex_unlock(&cloudpinyin->pendingQueueLock);
+
+    char c = 0;
+    write(cloudpinyin->pipeNotify, &c, sizeof(char));
 }
 
 
@@ -268,12 +298,8 @@ void CloudPinyinSetFD(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
     FcitxInstance* instance = cloudpinyin->owner;
-    int maxfd = 0;
-    curl_multi_fdset(cloudpinyin->curlm,
-                     FcitxInstanceGetReadFDSet(instance),
-                     FcitxInstanceGetWriteFDSet(instance),
-                     FcitxInstanceGetExceptFDSet(instance),
-                     &maxfd);
+    int maxfd = cloudpinyin->pipeRecv;
+    FD_SET(maxfd, FcitxInstanceGetReadFDSet(instance));
     if (maxfd > FcitxInstanceGetMaxFD(instance))
         FcitxInstanceSetMaxFD(instance, maxfd);
 }
@@ -281,40 +307,16 @@ void CloudPinyinSetFD(void* arg)
 void CloudPinyinProcessEvent(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
-    CURLMcode mcode;
-    int still_running;
-    do {
-        mcode = curl_multi_perform(cloudpinyin->curlm, &still_running);
-    } while (mcode == CURLM_CALL_MULTI_PERFORM);
-
-    int num_messages = 0;
-    CURLMsg* curl_message = curl_multi_info_read(cloudpinyin->curlm, &num_messages);;
-    CurlQueue* queue, *previous;
-
-    while (curl_message != NULL) {
-        if (curl_message->msg == CURLMSG_DONE) {
-            int curl_result = curl_message->data.result;
-            previous = cloudpinyin->queue;
-            queue = cloudpinyin->queue->next;
-            while (queue != NULL &&
-                    queue->curl != curl_message->easy_handle)
-            {
-                previous = queue;
-                queue = queue->next;
-            }
-            if (queue != NULL) {
-                curl_multi_remove_handle(cloudpinyin->curlm, queue->curl);
-                previous->next = queue->next;
-                queue->curl_result = curl_result;
-                curl_easy_getinfo(queue->curl, CURLINFO_HTTP_CODE, &queue->http_code);
-                CloudPinyinHandleReqest(cloudpinyin, queue);
-            }
-        } else {
-            FcitxLog(ERROR, "Unknown CURL message received: %d\n",
-                     (int)curl_message->msg);
-        }
-        curl_message = curl_multi_info_read(cloudpinyin->curlm, &num_messages);
+    pthread_mutex_lock(&cloudpinyin->finishQueueLock);
+    CurlQueue* queue;
+    queue = cloudpinyin->finishQueue;
+    while (queue->next != NULL)
+    {
+        CurlQueue* pivot = queue->next;
+        queue->next = queue->next->next;
+        CloudPinyinHandleRequest(cloudpinyin, pivot);
     }
+    pthread_mutex_unlock(&cloudpinyin->finishQueueLock);
 }
 
 void CloudPinyinDestroy(void* arg)
@@ -336,17 +338,12 @@ void CloudPinyinReloadConfig(void* arg)
 
 void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPinyin)
 {
-    int still_running;
     CURL* curl = curl_easy_init();
     if (!curl)
         return;
-    CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->queue;
+    CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->pendingQueue;
     queue->curl = curl;
     queue->next = NULL;
-
-    while (head->next != NULL)
-        head = head->next;
-    head->next = queue;
     queue->type = RequestPinyin;
     queue->pinyin = strdup(strPinyin);
     queue->source = cloudpinyin->config.source;
@@ -361,21 +358,21 @@ void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPi
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
-    curl_multi_add_handle(cloudpinyin->curlm, curl);
 
     free(url);
-    CURLMcode mcode;
-    do {
-        mcode = curl_multi_perform(cloudpinyin->curlm, &still_running);
-    } while (mcode == CURLM_CALL_MULTI_PERFORM);
 
-    if (mcode != CURLM_OK)
-    {
-        FcitxLog(ERROR, "curl error");
-    }
+    /* push into pending queue */
+    pthread_mutex_lock(&cloudpinyin->pendingQueueLock);
+    while (head->next != NULL)
+        head = head->next;
+    head->next = queue;
+    pthread_mutex_unlock(&cloudpinyin->pendingQueueLock);
+
+    char c = 0;
+    write(cloudpinyin->pipeNotify, &c, sizeof(char));
 }
 
-void CloudPinyinHandleReqest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
+void CloudPinyinHandleRequest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
 {
     if (queue->type == RequestKey)
     {
@@ -526,7 +523,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         candWord.strExtra = NULL;
     else {
         candWord.strExtra = strdup(_(" (via cloud)"));
-        candWord.wordType = MSG_TIPS;
+        candWord.extraType = MSG_TIPS;
     }
 
     int order = cloudpinyin->config.iCandidateOrder - 1;
