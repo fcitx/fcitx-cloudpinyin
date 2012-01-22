@@ -71,6 +71,7 @@ void* FetchThread(void* arg)
         t.tv_sec = 1;
         t.tv_usec = 0;
         
+        /* if we have something to fetch, but maxfd is -1 then we give select a time out */
         if (maxfd < 0 && fetch->queue->next != NULL)
             pt = &t;
         else

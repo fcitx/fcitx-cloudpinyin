@@ -309,6 +309,8 @@ void CloudPinyinSetFD(void* arg)
 void CloudPinyinProcessEvent(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
+    char c;
+    while (read(cloudpinyin->pipeRecv, &c, sizeof(char)) > 0);
     pthread_mutex_lock(&cloudpinyin->finishQueueLock);
     CurlQueue* queue;
     queue = cloudpinyin->finishQueue;
