@@ -1,4 +1,5 @@
 include_directories(
+    ${PROJECT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CURL_INCLUDE_DIRS}
     ${FCITX4_FCITX_INCLUDE_DIRS}

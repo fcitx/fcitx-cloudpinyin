@@ -34,6 +34,7 @@
 #include <fcitx-config/xdg.h>
 #include <fcitx/module/pinyin/pydef.h>
 
+#include "config.h"
 #include "cloudpinyin.h"
 #include "fetch.h"
 
@@ -48,6 +49,12 @@
 #define CLOUDPINYIN_CHECK_PAGE_NUMBER 3
 
 #define LOGLEVEL DEBUG
+
+#ifdef LIBICONV_SECOND_ARGUMENT_IS_CONST
+typedef const char* IconvStr;
+#else
+typedef char* IconvStr;
+#endif
 
 typedef struct _CloudCandWord {
     boolean filled;
@@ -924,7 +931,7 @@ char* BaiduParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
             buf[j++] = 0;
             size_t len = UTF8_MAX_LENGTH * (length / 6) * sizeof(char);
             char* realstring = fcitx_utils_malloc0(UTF8_MAX_LENGTH * (length / 6) * sizeof(char));
-            char* p = buf, *pp = realstring;
+            IconvStr p = buf; char *pp = realstring;
             iconv(conv, &p, &j, &pp, &len);
 
             free(buf);

@@ -24,5 +24,7 @@ add_custom_target(uninstall
 
 pkg_check_modules(CURL "libcurl" REQUIRED)
 
+configure_file(config.h.in config.h)
+
 add_subdirectory(src)
 add_subdirectory(po)
