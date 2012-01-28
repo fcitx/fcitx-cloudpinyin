@@ -578,6 +578,9 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
                 break;
         }
 
+        if (candWord == NULL)
+            return;
+
         FcitxCandidateWord* cand;
         int i = 0;
         int size = FcitxCandidateWordGetPageSize(candList) * CLOUDPINYIN_CHECK_PAGE_NUMBER;
