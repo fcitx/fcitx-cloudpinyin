@@ -28,6 +28,7 @@
 #define QQ_KEY_LENGTH 32
 #define MAX_CACHE_ENTRY 2048
 #define MAX_ERROR 10
+#define MAX_HANDLE 10l
 
 #define _(x) dgettext("fcitx-cloudpinyin", (x))
 
@@ -46,6 +47,12 @@ typedef enum _CloudPinyinRequestType
     RequestKey,
     RequestPinyin
 } CloudPinyinRequestType ;
+
+typedef struct _CurlFreeListItem
+{
+    boolean used;
+    CURL* curl;
+} CurlFreeListItem;
 
 typedef struct _CurlQueue
 {
@@ -94,6 +101,8 @@ typedef struct _FcitxCloudPinyin
     CloudPinyinCache* cache;
     boolean isrequestkey;
     struct _FcitxFetchThread* fetch;
+    
+    CurlFreeListItem freeList[MAX_HANDLE];
     
     pthread_t pid;
 } FcitxCloudPinyin;

@@ -40,7 +40,7 @@ void* FetchThread(void* arg)
     fetch->curlm = curl_multi_init();
     if (fetch->curlm == NULL)
         return NULL;
-    curl_multi_setopt(fetch->curlm, CURLMOPT_MAXCONNECTS, 10l);
+    curl_multi_setopt(fetch->curlm, CURLMOPT_MAXCONNECTS, MAX_HANDLE);
 
     while (true) {
 

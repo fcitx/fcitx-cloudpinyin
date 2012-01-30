@@ -86,7 +86,9 @@ static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin);
 static char* SplitHZAndPY(char* string);
-void CloudPinyinHookForNewRequest(void* arg);
+static void CloudPinyinHookForNewRequest(void* arg);
+static CURL* CloudPinyinGetFreeCurlHandle(FcitxCloudPinyin* cloudpinyin);
+static void CloudPinyinReleaseCurlHandle(FcitxCloudPinyin* cloudpinyin, CURL* curl);
 
 void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
 char* SogouParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
@@ -226,6 +228,38 @@ void* CloudPinyinCreate(FcitxInstance* instance)
     return cloudpinyin;
 }
 
+CURL* CloudPinyinGetFreeCurlHandle(FcitxCloudPinyin* cloudpinyin)
+{
+    int i = 0;
+    for (i = 0; i < MAX_HANDLE; i ++) {
+        if (!cloudpinyin->freeList[i].used) {
+            cloudpinyin->freeList[i].used = true;
+            if (cloudpinyin->freeList[i].curl == NULL) {
+                cloudpinyin->freeList[i].curl = curl_easy_init();
+            }
+            return cloudpinyin->freeList[i].curl;
+        }
+    }
+    /* return a stalled handle */
+    return curl_easy_init();
+}
+
+void CloudPinyinReleaseCurlHandle(FcitxCloudPinyin* cloudpinyin, CURL* curl)
+{
+    if (curl == NULL)
+        return;
+    int i = 0;
+    for (i = 0; i < MAX_HANDLE; i ++) {
+        if (cloudpinyin->freeList[i].curl == curl) {
+            cloudpinyin->freeList[i].used = false;
+            return;
+        }
+    }
+    /* if handle is stalled, free it */
+    curl_easy_cleanup(curl);
+}
+
+
 void CloudPinyinAddCandidateWord(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
@@ -275,7 +309,7 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
         return;
     }
 
-    CURL* curl = curl_easy_init();
+    CURL* curl = CloudPinyinGetFreeCurlHandle(cloudpinyin);
     if (!curl)
         return;
     CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->pendingQueue;
@@ -349,7 +383,7 @@ void CloudPinyinReloadConfig(void* arg)
 
 void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPinyin)
 {
-    CURL* curl = curl_easy_init();
+    CURL* curl = CloudPinyinGetFreeCurlHandle(cloudpinyin);
     if (!curl)
         return;
     CurlQueue* queue = fcitx_utils_malloc0(sizeof(CurlQueue)), *head = cloudpinyin->pendingQueue;
@@ -442,7 +476,7 @@ void CloudPinyinHandleRequest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
             }
         }
     }
-    curl_easy_cleanup(queue->curl);
+    CloudPinyinReleaseCurlHandle(cloudpinyin, queue->curl);
     if (queue->str)
         free(queue->str);
     if (queue->pinyin)
@@ -581,6 +615,10 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         if (candWord == NULL)
             return;
 
+        CloudCandWord* cloudCand = candWord->priv;
+        if (cloudCand->filled)
+            return;
+
         FcitxCandidateWord* cand;
         int i = 0;
         int size = FcitxCandidateWordGetPageSize(candList) * CLOUDPINYIN_CHECK_PAGE_NUMBER;
@@ -601,7 +639,6 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         
         if (candWord)
         {
-            CloudCandWord* cloudCand = candWord->priv;
             if (cloudCand->filled == false)
             {
                 cloudCand->filled = true;
