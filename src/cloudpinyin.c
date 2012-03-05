@@ -700,7 +700,7 @@ boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
     if (configDesc == NULL)
         return false;
 
-    FILE *fp = FcitxXDGGetFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "rt", NULL);
+    FILE *fp = FcitxXDGGetFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "r", NULL);
 
     if (!fp)
     {
@@ -725,7 +725,7 @@ boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
 void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
 {
     FcitxConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
-    FILE *fp = FcitxXDGGetFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "wt", NULL);
+    FILE *fp = FcitxXDGGetFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "w", NULL);
     FcitxConfigSaveConfigFileFp(fp, &fs->config, configDesc);
     if (fp)
         fclose(fp);
