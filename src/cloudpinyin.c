@@ -113,7 +113,7 @@ CloudPinyinEngine engine[4] =
     },
     {
         NULL,
-        "http://www.google.com/inputtools/request?ime=pinyin&text=%s",
+        "https://www.google.com/inputtools/request?ime=pinyin&text=%s",
         NULL,
         GoogleParsePinyin
     },
