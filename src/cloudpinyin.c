@@ -45,7 +45,7 @@
                         strcmp(im->uniqueName, "googlepinyin") == 0 || \
                         strcmp(im->uniqueName, "sunpinyin") == 0 || \
                         strcmp(im->uniqueName, "shuangpin") == 0))
-                        
+
 #define CLOUDPINYIN_CHECK_PAGE_NUMBER 3
 
 #define LOGLEVEL DEBUG
@@ -187,7 +187,7 @@ void* CloudPinyinCreate(FcitxInstance* instance)
 
     cloudpinyin->pipeRecv = pipe1[0];
     cloudpinyin->pipeNotify = pipe2[1];
-    
+
     fcntl(pipe1[0], F_SETFL, O_NONBLOCK);
     fcntl(pipe1[1], F_SETFL, O_NONBLOCK);
     fcntl(pipe2[0], F_SETFL, O_NONBLOCK);
@@ -220,7 +220,7 @@ void* CloudPinyinCreate(FcitxInstance* instance)
     FcitxInstanceRegisterInputFocusHook(instance, hook);
     FcitxInstanceRegisterInputUnFocusHook(instance, hook);
     FcitxInstanceRegisterTriggerOnHook(instance, hook);
-    
+
     pthread_create(&cloudpinyin->pid, NULL, FetchThread, fetch);
 
     CloudPinyinRequestKey(cloudpinyin);
@@ -547,7 +547,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, pinyin);
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     struct _FcitxCandidateWordList* candList = FcitxInputStateGetCandidateList(input);
-    
+
     if (cacheEntry) {
         FcitxCandidateWord* cand;
         /* only check the first three page */
@@ -636,7 +636,7 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
             if (i >= size)
                 break;
         }
-        
+
         if (candWord)
         {
             if (cloudCand->filled == false)
@@ -671,13 +671,9 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
             if (im)
             {
                 if (strcmp(im->uniqueName, "sunpinyin") == 0)
-                {
-                    //InvokeModuleFunctionWithName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
-                }
+                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
                 else if (strcmp(im->uniqueName, "shuangpin") == 0 || strcmp(im->uniqueName, "pinyin") == 0)
-                {
                     FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
-                }
             }
         }
         if (string)
