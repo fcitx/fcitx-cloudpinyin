@@ -39,6 +39,7 @@
 #include "fetch.h"
 
 #define CHECK_VALID_IM (im && \
+                        strcmp(im->langCode, "zh_CN") == 0 && \
                         (strcmp(im->uniqueName, "pinyin") == 0 || \
                         strcmp(im->uniqueName, "pinyin-libpinyin") == 0 || \
                         strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 || \
