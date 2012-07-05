@@ -2,7 +2,7 @@ project(fcitx-cloudpinyin)
 cmake_minimum_required(VERSION 2.6)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-find_package(Fcitx 4.2.0 REQUIRED)
+find_package(Fcitx 4.2.5 REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(Libintl REQUIRED)

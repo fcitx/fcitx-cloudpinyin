@@ -547,19 +547,26 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
 {
     CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, pinyin);
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
-    struct _FcitxCandidateWordList* candList = FcitxInputStateGetCandidateList(input);
+    FcitxCandidateWordList* candList = FcitxInputStateGetCandidateList(input);
+
+    int order = cloudpinyin->config.iCandidateOrder - 1;
+    if (order < 0)
+        order = 0;
 
     if (cacheEntry) {
         FcitxCandidateWord* cand;
         /* only check the first three page */
         int size = FcitxCandidateWordGetPageSize(candList) * CLOUDPINYIN_CHECK_PAGE_NUMBER;
         int i = 0;
-        for (cand = FcitxCandidateWordGetFirst(FcitxInputStateGetCandidateList(input));
+        for (cand = FcitxCandidateWordGetFirst(candList);
              cand != NULL;
-             cand = FcitxCandidateWordGetNext(FcitxInputStateGetCandidateList(input), cand))
+             cand = FcitxCandidateWordGetNext(candList, cand))
         {
-            if (strcmp(cand->strWord, cacheEntry->str) == 0)
+            if (strcmp(cand->strWord, cacheEntry->str) == 0) {
+                if (i > order)
+                    FcitxCandidateWordMoveByWord(candList, cand, order);
                 return;
+            }
             i ++;
             if (i >= size)
                 break;
@@ -590,10 +597,6 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         candWord.extraType = MSG_TIPS;
     }
 
-    int order = cloudpinyin->config.iCandidateOrder - 1;
-    if (order < 0)
-        order = 0;
-
     FcitxCandidateWordInsert(candList, &candWord, order);
 }
 
@@ -604,6 +607,7 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     struct _FcitxCandidateWordList* candList = FcitxInputStateGetCandidateList(input);
     if (cacheEntry)
     {
+        int cloudidx = 0;
         FcitxCandidateWord* candWord;
         for (candWord = FcitxCandidateWordGetFirst(candList);
              candWord != NULL;
@@ -611,6 +615,7 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         {
             if (candWord->owner == cloudpinyin)
                 break;
+            cloudidx ++;
         }
 
         if (candWord == NULL)
@@ -629,6 +634,8 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         {
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
                 FcitxCandidateWordRemove(candList, candWord);
+                if (i > cloudidx)
+                    FcitxCandidateWordMove(candList, i - 1, cloudidx);
                 FcitxUIUpdateInputWindow(cloudpinyin->owner);
                 candWord = NULL;
                 break;
@@ -823,7 +830,7 @@ char* SplitHZAndPY(char* string)
     while (*s)
     {
         char* p;
-        int chr;
+        unsigned int chr;
 
         p = fcitx_utf8_get_char(s, &chr);
         if (p - s == 1)

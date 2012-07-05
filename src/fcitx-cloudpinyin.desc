@@ -5,7 +5,7 @@ Description=Cloud Pinyin Candidate Word Order
 
 [CloudPinyin/MinimumPinyinLength]
 Type=Integer
-DefaultValue=5
+DefaultValue=2
 Description=Minimum Length of Pinyin To Trigger Cloud Pinyin
 
 [CloudPinyin/DontShowSource]
