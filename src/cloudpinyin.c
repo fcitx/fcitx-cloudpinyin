@@ -627,15 +627,23 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
 
         FcitxCandidateWord* cand;
         int i = 0;
-        int size = FcitxCandidateWordGetPageSize(candList) * CLOUDPINYIN_CHECK_PAGE_NUMBER;
+        int pagesize = FcitxCandidateWordGetPageSize(candList);
+        int size = pagesize * CLOUDPINYIN_CHECK_PAGE_NUMBER;
         for (cand = FcitxCandidateWordGetFirst(candList);
              cand != NULL;
              cand = FcitxCandidateWordGetNext(candList, cand))
         {
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
                 FcitxCandidateWordRemove(candList, candWord);
-                if (i > cloudidx)
-                    FcitxCandidateWordMove(candList, i - 1, cloudidx);
+                /* if cloud word is not on the first page.. impossible */
+                if (cloudidx < pagesize) {
+                    /* if the duplication before cloud word */
+                    if (i < pagesize) {
+                        FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
+                    } else {
+                        FcitxCandidateWordMove(candList, i - 1, cloudidx);
+                    }
+                }
                 FcitxUIUpdateInputWindow(cloudpinyin->owner);
                 candWord = NULL;
                 break;
@@ -682,6 +690,11 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
                     FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
                 else if (strcmp(im->uniqueName, "shuangpin") == 0 || strcmp(im->uniqueName, "pinyin") == 0)
                     FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
+                else if (strcmp(im->uniqueName, "pinyin-libpinyin") == 0 ||
+                         strcmp(im->uniqueName, "shuangpin-libpinyin") == 0)
+                {
+                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-libpinyin", 0, args);
+                }
             }
         }
         if (string)
