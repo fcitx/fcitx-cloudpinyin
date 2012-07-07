@@ -638,10 +638,9 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
                 /* if cloud word is not on the first page.. impossible */
                 if (cloudidx < pagesize) {
                     /* if the duplication before cloud word */
+                    FcitxCandidateWordMove(candList, i - 1, cloudidx);
                     if (i < pagesize) {
-                        FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
-                    } else {
-                        FcitxCandidateWordMove(candList, i - 1, cloudidx);
+                        FcitxCandidateWordInsertPlaceHolder(candList, i);
                     }
                 }
                 FcitxUIUpdateInputWindow(cloudpinyin->owner);
