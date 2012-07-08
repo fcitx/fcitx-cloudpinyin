@@ -636,7 +636,7 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
                 FcitxCandidateWordRemove(candList, candWord);
                 /* if cloud word is not on the first page.. impossible */
-                if (cloudidx < pagesize) {
+                if (cloudidx < pagesize && i > cloudidx) {
                     /* if the duplication before cloud word */
                     FcitxCandidateWordMove(candList, i - 1, cloudidx);
                     if (i < pagesize) {
