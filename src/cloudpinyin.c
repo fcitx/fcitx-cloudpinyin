@@ -556,14 +556,15 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     if (cacheEntry) {
         FcitxCandidateWord* cand;
         /* only check the first three page */
-        int size = FcitxCandidateWordGetPageSize(candList) * CLOUDPINYIN_CHECK_PAGE_NUMBER;
+        int pagesize = FcitxCandidateWordGetPageSize(candList);
+        int size = pagesize * CLOUDPINYIN_CHECK_PAGE_NUMBER;
         int i = 0;
         for (cand = FcitxCandidateWordGetFirst(candList);
              cand != NULL;
              cand = FcitxCandidateWordGetNext(candList, cand))
         {
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
-                if (i > order)
+                if (i > order && i >= pagesize)
                     FcitxCandidateWordMoveByWord(candList, cand, order);
                 return;
             }
@@ -642,9 +643,11 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
                         FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
                     }
                     else {
-                        FcitxCandidateWordMove(candList, i - 1, cloudidx);
-                        if (i < pagesize) {
-                            FcitxCandidateWordInsertPlaceHolder(candList, i);
+                        if (i >= pagesize) {
+                            FcitxCandidateWordMove(candList, i - 1, cloudidx);
+                        }
+                        else {
+                            FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
                         }
                     }
                 }
