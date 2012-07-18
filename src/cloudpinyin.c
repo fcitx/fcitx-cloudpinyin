@@ -607,7 +607,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
 }
 
 #define LOADING_TIME_QUICK_THRESHOLD 300
-#define DUP_PLACE_HOLDER "\xe2\x98\xb9"
+#define DUP_PLACE_HOLDER "\xe2\x98\xba"
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
 {
