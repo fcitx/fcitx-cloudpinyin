@@ -59,6 +59,7 @@ typedef char* IconvStr;
 
 typedef struct _CloudCandWord {
     boolean filled;
+    uint64_t timestamp;
 } CloudCandWord;
 
 typedef struct _CloudPinyinEngine {
@@ -579,11 +580,15 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     if (cacheEntry)
     {
         cloudCand->filled = true;
+        cloudCand->timestamp = 0;
         candWord.strWord = strdup(cacheEntry->str);
     }
     else
     {
         cloudCand->filled = false;
+        struct timeval current_time;
+        gettimeofday(&current_time, NULL);
+        cloudCand->timestamp = ((uint64_t)current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
         candWord.strWord = strdup("..");
     }
 
@@ -600,6 +605,8 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
 
     FcitxCandidateWordInsert(candList, &candWord, order);
 }
+
+#define LOADING_TIME_QUICK_THRESHOLD 300
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
 {
@@ -637,17 +644,31 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
                 FcitxCandidateWordRemove(candList, candWord);
                 /* if cloud word is not on the first page.. impossible */
+                struct timeval current_time;
+                gettimeofday(&current_time, NULL);
+                uint64_t timestamp = ((uint64_t)current_time.tv_sec * 1000) + (current_time.tv_usec / 1000);
+
                 if (cloudidx < pagesize) {
                     /* if the duplication before cloud word */
                     if (i < cloudidx) {
-                        FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
+                        if (timestamp - cloudCand->timestamp > LOADING_TIME_QUICK_THRESHOLD) {
+                            FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
+                            FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
+                            if (placeHolder && placeHolder->strWord == NULL)
+                                placeHolder->strWord = strdup("\xe2\x8a\x99");
+                        }
                     }
                     else {
                         if (i >= pagesize) {
                             FcitxCandidateWordMove(candList, i - 1, cloudidx);
                         }
                         else {
-                            FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
+                            if (timestamp - cloudCand->timestamp > LOADING_TIME_QUICK_THRESHOLD) {
+                                FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
+                                FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
+                                if (placeHolder && placeHolder->strWord == NULL)
+                                    placeHolder->strWord = strdup("\xe2\x8a\x99");
+                            }
                         }
                     }
                 }
