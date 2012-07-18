@@ -607,6 +607,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
 }
 
 #define LOADING_TIME_QUICK_THRESHOLD 300
+#define DUP_PLACE_HOLDER "\xe2\x98\xb9"
 
 void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
 {
@@ -655,7 +656,7 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
                             FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
                             FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
                             if (placeHolder && placeHolder->strWord == NULL)
-                                placeHolder->strWord = strdup("\xe2\x8a\x99");
+                                placeHolder->strWord = strdup(DUP_PLACE_HOLDER);
                         }
                     }
                     else {
@@ -667,7 +668,7 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
                                 FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
                                 FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
                                 if (placeHolder && placeHolder->strWord == NULL)
-                                    placeHolder->strWord = strdup("\xe2\x8a\x99");
+                                    placeHolder->strWord = strdup(DUP_PLACE_HOLDER);
                             }
                         }
                     }
