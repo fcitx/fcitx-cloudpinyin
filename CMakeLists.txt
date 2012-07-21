@@ -7,6 +7,7 @@ find_package(PkgConfig REQUIRED)
 find_package(Gettext REQUIRED)
 find_package(Libintl REQUIRED)
 find_package(Libiconv REQUIRED)
+find_package(Pthread REQUIRED)
 
 # uninstall target
 configure_file(
@@ -24,7 +25,12 @@ add_custom_target(uninstall
 
 pkg_check_modules(CURL "libcurl" REQUIRED)
 
+set(LOCALEDIR "${CMAKE_INSTALL_PREFIX}/share/locale")
+
 configure_file(config.h.in config.h)
+
+enable_testing()
 
 add_subdirectory(src)
 add_subdirectory(po)
+add_subdirectory(test)

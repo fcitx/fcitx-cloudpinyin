@@ -1,31 +1,27 @@
 include_directories(
+    ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_BINARY_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CURL_INCLUDE_DIRS}
-    ${PTHREAD_INCLUDE_DIR}
     ${FCITX4_FCITX_INCLUDE_DIRS}
     ${FCITX4_FCITX_CONFIG_INCLUDE_DIRS}
     ${FCITX4_FCITX_UTILS_INCLUDE_DIRS}
     ${LIBINTL_INCLUDE_DIR}
+    ${PTHREAD_INCLUDE_DIR}
 )
 
 link_directories(
     ${CURL_LIBRARY_DIRS}
+    ${FCITX4_FCITX_UTILS_LIBRARY_DIRS}
 )
 
-set(FCITX_CLOUDPINYIN_SRCS
-    cloudpinyin.c
-    cloudpinyinconifg.c
-    fetch.c
-    parse.c
-)
+add_executable(testhalf testhalf.c ../src/parse.c)
 
-fcitx_add_addon(fcitx-cloudpinyin ${FCITX_CLOUDPINYIN_SRCS})
-target_link_libraries( fcitx-cloudpinyin
+target_link_libraries( testhalf
+                       ${PTHREAD_LIBRARIES}
+                       ${FCITX4_FCITX_UTILS_LIBRARIES}
                        ${CURL_LIBRARIES}
                        ${LIBINTL_LIBRARIES}
-                       ${PTHREAD_LIBRARIES}
                        )
 
-fcitx_add_addon_conf_file(fcitx-cloudpinyin.conf)
-fcitx_add_configdesc_file(fcitx-cloudpinyin.desc)
+add_test(testhalf testhalf)

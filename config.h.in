@@ -1,1 +1,9 @@
 #cmakedefine LIBICONV_SECOND_ARGUMENT_IS_CONST
+#cmakedefine LOCALEDIR "@LOCALEDIR@"
+#define _GNU_SOURCE
+
+#ifdef LIBICONV_SECOND_ARGUMENT_IS_CONST
+typedef const char* IconvStr;
+#else
+typedef char* IconvStr;
+#endif
