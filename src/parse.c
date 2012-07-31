@@ -5,6 +5,7 @@
 #include <fcitx-utils/utils.h>
 #include <fcitx-utils/utf8.h>
 #include <iconv.h>
+#include <ctype.h>
 #include "cloudpinyin.h"
 
 static inline boolean ishex(char ch)
@@ -39,7 +40,8 @@ char* MapSogouStringToHalf(const char* string)
 
         /* from A to Z */
         if ((chr >= 0xff21 && chr <= 0xff3a) || (chr >= 0xff41 && chr <= 0xff5a)) {
-            *halfp = (char) (chr & 0xff) + 0x20;
+            char half = (char) (chr & 0xff) + 0x20;
+            *halfp = tolower(half);
             halfp ++;
         }
         else {
