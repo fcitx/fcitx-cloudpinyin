@@ -33,6 +33,8 @@ char* MapSogouStringToHalf(const char* string)
     size_t len = strlen(string);
     char* half = fcitx_utils_malloc0(sizeof(char) * (len + 1));
     char* halfp = half;
+    int upperCount = 0;
+
     while (*s) {
         unsigned int chr = 0;
 
@@ -40,19 +42,25 @@ char* MapSogouStringToHalf(const char* string)
 
         /* from A to Z */
         if ((chr >= 0xff21 && chr <= 0xff3a) || (chr >= 0xff41 && chr <= 0xff5a)) {
-            char half = (char) (chr & 0xff) + 0x20;
-            *halfp = tolower(half);
+            *halfp = (char) (chr & 0xff) + 0x20;
+            if (isupper(*halfp))
+                upperCount ++;
             halfp ++;
         }
         else {
             while(s < sn) {
                 *halfp = *s;
+                if (isupper(*halfp))
+                    upperCount ++;
                 s++;
                 halfp++;
             }
         }
 
         s = sn;
+    }
+    if (*half && isupper(*half) && upperCount == 1) {
+        *half = tolower(*half);
     }
     return half;
 }
