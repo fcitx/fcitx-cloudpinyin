@@ -83,7 +83,6 @@ static void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const ch
 static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin);
-static char* SplitHZAndPY(char* string);
 static void CloudPinyinHookForNewRequest(void* arg);
 static CURL* CloudPinyinGetFreeCurlHandle(FcitxCloudPinyin* cloudpinyin);
 static void CloudPinyinReleaseCurlHandle(FcitxCloudPinyin* cloudpinyin, CURL* curl);
@@ -251,7 +250,7 @@ void CloudPinyinAddCandidateWord(void* arg)
         {
             char* strToFree = NULL, *inputString;
             strToFree = GetCurrentString(cloudpinyin);
-            inputString = SplitHZAndPY(strToFree);
+            inputString = fcitx_utils_get_ascii_part(strToFree);
 
             if (inputString)
             {
@@ -420,7 +419,7 @@ void CloudPinyinHandleRequest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
 
                 char* strToFree = NULL, *inputString;
                 strToFree = GetCurrentString(cloudpinyin);
-                inputString = SplitHZAndPY(strToFree);
+                inputString = fcitx_utils_get_ascii_part(strToFree);
 
                 if (inputString)
                 {
@@ -675,7 +674,7 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
     if (cloudCand->filled)
     {
         char* string = GetCurrentString(cloudpinyin);
-        char* py = SplitHZAndPY(string);
+        char* py = fcitx_utils_get_ascii_part(string);
         if (py)
         {
             *py = 0;
@@ -757,7 +756,7 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     char* string = FcitxUIMessagesToCString(FcitxInputStateGetPreedit(input));
     char p[MAX_USER_INPUT + 1], *pinyin, *lastpos;
-    pinyin = SplitHZAndPY(string);
+    pinyin = fcitx_utils_get_ascii_part(string);
     lastpos = pinyin;
     boolean endflag;
     int hzlength = pinyin - string;
@@ -833,26 +832,6 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
         return NULL;
     else
         return strdup(p);
-}
-
-char* SplitHZAndPY(char* string)
-{
-    if (string == NULL)
-        return NULL;
-
-    char* s = string;
-    while (*s)
-    {
-        char* p;
-        unsigned int chr;
-
-        p = fcitx_utf8_get_char(s, &chr);
-        if (p - s == 1)
-            break;
-        s = p;
-    }
-
-    return s;
 }
 
 void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
