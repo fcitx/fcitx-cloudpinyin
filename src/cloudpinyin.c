@@ -522,8 +522,8 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     FcitxCandidateWordList* candList = FcitxInputStateGetCandidateList(input);
 
     int order = cloudpinyin->config.iCandidateOrder - 1;
-    if (order < 0)
-        order = 0;
+    if (order < 1)
+        order = 1;
 
     if (cacheEntry) {
         FcitxCandidateWord* cand;
