@@ -131,7 +131,8 @@ FcitxModule module = {
 FCITX_EXPORT_API
 int ABI_VERSION = FCITX_ABI_VERSION;
 
-static uint64_t CloudGetTimeStamp()
+static uint64_t
+CloudGetTimeStamp()
 {
     struct timeval current_time;
     gettimeofday(&current_time, NULL);
@@ -139,9 +140,20 @@ static uint64_t CloudGetTimeStamp()
             + (current_time.tv_usec / 1000));
 }
 
+static void
+CloudSetClientPreedit(FcitxCloudPinyin *cloudpinyin, const char *str)
+{
+    FcitxInputState *input = FcitxInstanceGetInputState(cloudpinyin->owner);
+    FcitxMessages *message = FcitxInputStateGetClientPreedit(input);
+    FcitxMessagesSetMessageCount(message, 0);
+    FcitxMessagesAddMessageAtLast(message, MSG_INPUT, "%s", str);
+    FcitxInstanceUpdateClientSideUI(
+        cloudpinyin->owner, FcitxInstanceGetCurrentIC(cloudpinyin->owner));
+}
+
 void* CloudPinyinCreate(FcitxInstance* instance)
 {
-    FcitxCloudPinyin* cloudpinyin = fcitx_utils_malloc0(sizeof(FcitxCloudPinyin));
+    FcitxCloudPinyin *cloudpinyin = fcitx_utils_new(FcitxCloudPinyin);
     bindtextdomain("fcitx-cloudpinyin", LOCALEDIR);
     cloudpinyin->owner = instance;
     int pipe1[2];
@@ -538,6 +550,10 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         int pagesize = FcitxCandidateWordGetPageSize(candList);
         int size = pagesize * CLOUDPINYIN_CHECK_PAGE_NUMBER;
         int i;
+        if (cloudpinyin->config.iCandidateOrder <= 1) {
+            order = 0;
+            CloudSetClientPreedit(cloudpinyin, cacheEntry->str);
+        }
         for (i = 0;i < size &&
                  (cand = FcitxCandidateWordGetByTotalIndex(candList, i));i++) {
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
@@ -554,8 +570,6 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         cloudCand->filled = true;
         cloudCand->timestamp = 0;
         candWord.strWord = strdup(cacheEntry->str);
-        if (cloudpinyin->config.iCandidateOrder <= 1)
-            order = 0;
     } else {
         cloudCand->filled = false;
         cloudCand->timestamp = CloudGetTimeStamp();
@@ -649,15 +663,8 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin,
                 if (cloudpinyin->config.iCandidateOrder <= 1 &&
                     (CloudGetTimeStamp() - cloudCand->timestamp
                      <= LOADING_TIME_QUICK_THRESHOLD)) {
-                    FcitxMessages *message;
                     FcitxCandidateWordMoveByWord(candList, candWord, 0);
-                    message = FcitxInputStateGetClientPreedit(input);
-                    FcitxMessagesSetMessageCount(message, 0);
-                    FcitxMessagesAddMessageAtLast(message, MSG_INPUT,
-                                                  "%s", cacheEntry->str);
-                    FcitxInstanceUpdateClientSideUI(
-                        cloudpinyin->owner,
-                        FcitxInstanceGetCurrentIC(cloudpinyin->owner));
+                    CloudSetClientPreedit(cloudpinyin, cacheEntry->str);
                 }
                 FcitxUIUpdateInputWindow(cloudpinyin->owner);
             }
