@@ -1,7 +1,7 @@
 [CloudPinyin/CandidateOrder]
 Type=Integer
 DefaultValue=2
-Min=2
+Min=1
 Description=Cloud Pinyin Candidate Word Order
 
 [CloudPinyin/MinimumPinyinLength]
