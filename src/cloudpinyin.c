@@ -145,8 +145,17 @@ CloudSetClientPreedit(FcitxCloudPinyin *cloudpinyin, const char *str)
 {
     FcitxInputState *input = FcitxInstanceGetInputState(cloudpinyin->owner);
     FcitxMessages *message = FcitxInputStateGetClientPreedit(input);
+    char *string = GetCurrentString(cloudpinyin);
+    char *py = fcitx_utils_get_ascii_part(string);
     FcitxMessagesSetMessageCount(message, 0);
-    FcitxMessagesAddMessageAtLast(message, MSG_INPUT, "%s", str);
+    if (py) {
+        *py = '\0';
+        FcitxMessagesAddMessageAtLast(message, MSG_INPUT, "%s%s", string, str);
+    } else {
+        FcitxMessagesAddMessageAtLast(message, MSG_INPUT, "%s", str);
+    }
+    if (string)
+        free(string);
     FcitxInstanceUpdateClientSideUI(
         cloudpinyin->owner, FcitxInstanceGetCurrentIC(cloudpinyin->owner));
 }
@@ -706,9 +715,9 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
         if (string)
             free(string);
         return IRV_COMMIT_STRING;
-    }
-    else
+    } else {
         return IRV_DO_NOTHING;
+    }
 }
 
 
