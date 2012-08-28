@@ -82,7 +82,8 @@ static void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const ch
 static void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
 static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
-static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin);
+static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin,
+                              char **ascii_part);
 static void CloudPinyinHookForNewRequest(void* arg);
 static CURL* CloudPinyinGetFreeCurlHandle(FcitxCloudPinyin* cloudpinyin);
 static void CloudPinyinReleaseCurlHandle(FcitxCloudPinyin* cloudpinyin,
@@ -145,8 +146,8 @@ CloudSetClientPreedit(FcitxCloudPinyin *cloudpinyin, const char *str)
 {
     FcitxInputState *input = FcitxInstanceGetInputState(cloudpinyin->owner);
     FcitxMessages *message = FcitxInputStateGetClientPreedit(input);
-    char *string = GetCurrentString(cloudpinyin);
-    char *py = fcitx_utils_get_ascii_part(string);
+    char *py;
+    char *string = GetCurrentString(cloudpinyin, &py);
     FcitxMessagesSetMessageCount(message, 0);
     if (py) {
         *py = '\0';
@@ -278,11 +279,9 @@ void CloudPinyinAddCandidateWord(void* arg)
         if (FcitxInputStateGetRawInputBufferSize(input) >= cloudpinyin->config.iMinimumPinyinLength)
         {
             char* strToFree = NULL, *inputString;
-            strToFree = GetCurrentString(cloudpinyin);
-            inputString = fcitx_utils_get_ascii_part(strToFree);
+            strToFree = GetCurrentString(cloudpinyin, &inputString);
 
-            if (inputString)
-            {
+            if (inputString) {
                 CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, inputString);
                 FcitxLog(LOGLEVEL, "%s", inputString);
                 if (cacheEntry == NULL)
@@ -447,11 +446,9 @@ void CloudPinyinHandleRequest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                 FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
 
                 char* strToFree = NULL, *inputString;
-                strToFree = GetCurrentString(cloudpinyin);
-                inputString = fcitx_utils_get_ascii_part(strToFree);
+                strToFree = GetCurrentString(cloudpinyin, &inputString);
 
-                if (inputString)
-                {
+                if (inputString) {
                     FcitxLog(LOGLEVEL, "fill: %s %s", inputString, queue->pinyin);
                     if (strcmp(inputString, queue->pinyin) == 0)
                     {
@@ -688,10 +685,9 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     if (cloudCand->filled)
     {
-        char* string = GetCurrentString(cloudpinyin);
-        char* py = fcitx_utils_get_ascii_part(string);
-        if (py)
-        {
+        char *py;
+        char *string = GetCurrentString(cloudpinyin, &py);
+        if (py) {
             *py = 0;
 
             snprintf(FcitxInputStateGetOutputString(input), MAX_USER_INPUT, "%s%s", string, candWord->strWord);
@@ -763,11 +759,14 @@ void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
         fclose(fp);
 }
 
-char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
+char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
 {
     FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
-    if (!im)
+    if (!im) {
+        if (ascii_part)
+            *ascii_part = NULL;
         return NULL;
+    }
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
     char* string = FcitxUIMessagesToCString(FcitxInputStateGetPreedit(input));
     char p[MAX_USER_INPUT + 1], *pinyin, *lastpos;
@@ -778,58 +777,41 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
     size_t plength = hzlength;
     strncpy(p, string, hzlength);
     p[hzlength] = '\0';
-    do
-    {
+    do {
         endflag = (*pinyin != '\0');
-
-        if (*pinyin == ' ' || *pinyin == '\'' || *pinyin == '\0')
-        {
+        if (*pinyin == ' ' || *pinyin == '\'' || *pinyin == '\0') {
             *pinyin = 0;
 
-            if (*lastpos != '\0')
-            {
+            if (*lastpos != '\0') {
                 char* result = NULL;
                 FcitxModuleFunctionArg arg;
                 arg.args[0] = lastpos;
                 boolean isshuangpin = false;
-                if (strcmp(im->uniqueName, "sunpinyin") == 0)
-                {
+                if (strcmp(im->uniqueName, "sunpinyin") == 0) {
                     boolean issp = false;
                     arg.args[1] = &issp;
                     result = FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sunpinyin", 0, arg);
                     isshuangpin = issp;
-                }
-                else if (strcmp(im->uniqueName, "shuangpin") == 0)
-                {
+                } else if (strcmp(im->uniqueName, "shuangpin") == 0) {
                     isshuangpin = true;
                     result = InvokeFunction(cloudpinyin->owner, FCITX_PINYIN, SP2QP, arg);
                 }
-                if (isshuangpin)
-                {
-                    if (result)
-                    {
-                        if (plength + strlen(result) < MAX_USER_INPUT)
-                        {
+                if (isshuangpin) {
+                    if (result) {
+                        if (plength + strlen(result) < MAX_USER_INPUT) {
                             strcat(p + plength, result);
                             plength += strlen(result);
                             free(result);
-                        }
-                        else
-                        {
+                        } else {
                             p[hzlength] = '\0';
                             break;
                         }
                     }
-                }
-                else
-                {
-                    if (plength + strlen(lastpos) < MAX_USER_INPUT)
-                    {
+                } else {
+                    if (plength + strlen(lastpos) < MAX_USER_INPUT) {
                         strcat(p + plength, lastpos);
                         plength += strlen(lastpos);
-                    }
-                    else
-                    {
+                    } else {
                         p[hzlength] = '\0';
                         break;
                     }
@@ -843,10 +825,16 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin)
     } while(endflag);
     free(string);
     /* no pinyin append, return NULL for off it */
-    if (p[hzlength] == '\0')
+    if (p[hzlength] == '\0') {
+        if (ascii_part)
+            *ascii_part = NULL;
         return NULL;
-    else
-        return strdup(p);
+    } else {
+        char *res = strdup(p);
+        if (ascii_part)
+            *ascii_part = res + hzlength;
+        return res;
+    }
 }
 
 void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
