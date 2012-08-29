@@ -1,11 +1,13 @@
 [CloudPinyin/CandidateOrder]
 Type=Integer
 DefaultValue=2
+Min=1
 Description=Cloud Pinyin Candidate Word Order
 
 [CloudPinyin/MinimumPinyinLength]
 Type=Integer
 DefaultValue=2
+Min=1
 Description=Minimum Length of Pinyin To Trigger Cloud Pinyin
 
 [CloudPinyin/DontShowSource]
