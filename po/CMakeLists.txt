@@ -9,10 +9,7 @@ set(POT_FILE fcitx-cloudpinyin.pot)
 configure_file(POTFILES.in.in ${CMAKE_CURRENT_BINARY_DIR}/POTFILES.in)
 
 extract_fcitx_addon_conf_postring()
-
-add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/desc.po
-                   COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/getdescpo ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
-                   DEPENDS getdescpo)
+extract_fcitx_desc_file_postring()
 
 add_custom_target(
     pot

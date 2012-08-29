@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-27 22:05+0800\n"
+"POT-Creation-Date: 2012-08-29 18:07-0400\n"
 "PO-Revision-Date: 2012-01-26 16:05+0000\n"
 "Last-Translator: Alisha <alisha.4m@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.net/projects/p/fcitx/"
@@ -19,23 +19,27 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:487
+#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:588
 msgid " (via cloud)"
 msgstr "（來自雲）"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:1
+#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:2
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
 msgstr "為拼音輸入法加入雲拼音支援"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:2
+#: unknown
+msgid "Baidu"
+msgstr ""
+
+#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:1
 msgid "Cloud Pinyin"
 msgstr "雲拼音"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:4
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:5
 msgid "Cloud Pinyin Candidate Word Order"
 msgstr "雲拼音候選字順序"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:24
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:21
 msgid "Cloud Pinyin Source"
 msgstr "雲拼音來源"
 
@@ -43,7 +47,7 @@ msgstr "雲拼音來源"
 msgid "CloudPinyin"
 msgstr "雲拼音"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:19
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:16
 msgid "Don't Show the 'via cloud' hint"
 msgstr "不顯示「來自雲」提示"
 
@@ -51,13 +55,9 @@ msgstr "不顯示「來自雲」提示"
 msgid "Google"
 msgstr "Google"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:9
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:11
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
 msgstr "最小觸發雲拼音的拼音長度"
-
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:14
-msgid "Only use origin Pinyin to query the result"
-msgstr "只使用原始拼音查詢結果"
 
 #: unknown
 msgid "QQ"
@@ -66,3 +66,6 @@ msgstr "QQ"
 #: unknown
 msgid "Sogou"
 msgstr "搜狗"
+
+#~ msgid "Only use origin Pinyin to query the result"
+#~ msgstr "只使用原始拼音查詢結果"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-08-27 22:05+0800\n"
+"POT-Creation-Date: 2012-08-29 18:07-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,28 +17,28 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:4
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:5
 msgid "Cloud Pinyin Candidate Word Order"
 msgstr ""
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:9
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:11
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
 msgstr ""
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:14
-msgid "Only use origin Pinyin to query the result"
-msgstr ""
-
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:19
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:16
 msgid "Don't Show the 'via cloud' hint"
 msgstr ""
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:24
+#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:21
 msgid "Cloud Pinyin Source"
 msgstr ""
 
 # unknown
 msgid "CloudPinyin"
+msgstr ""
+
+#: unknown
+msgid "Baidu"
 msgstr ""
 
 #: unknown
@@ -54,13 +54,13 @@ msgid "Sogou"
 msgstr ""
 
 #: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:1
-msgid "Add Cloud Pinyin Support to Pinyin Input Method"
-msgstr ""
-
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:2
 msgid "Cloud Pinyin"
 msgstr ""
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:487
+#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:2
+msgid "Add Cloud Pinyin Support to Pinyin Input Method"
+msgstr ""
+
+#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:588
 msgid " (via cloud)"
 msgstr ""
