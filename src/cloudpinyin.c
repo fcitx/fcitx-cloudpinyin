@@ -120,17 +120,13 @@ CloudPinyinEngine engine[4] =
 
 CONFIG_DESC_DEFINE(GetCloudPinyinConfigDesc, "fcitx-cloudpinyin.desc")
 
-FCITX_EXPORT_API
-FcitxModule module = {
-    CloudPinyinCreate,
-    CloudPinyinSetFD,
-    CloudPinyinProcessEvent,
-    CloudPinyinDestroy,
-    CloudPinyinReloadConfig
+FCITX_DEFINE_PLUGIN(fcitx_cloudpinyin, module, FcitxModule) = {
+    .Create = CloudPinyinCreate,
+    .Destroy = CloudPinyinDestroy,
+    .SetFD = CloudPinyinSetFD,
+    .ProcessEvent = CloudPinyinProcessEvent,
+    .ReloadConfig = CloudPinyinReloadConfig
 };
-
-FCITX_EXPORT_API
-int ABI_VERSION = FCITX_ABI_VERSION;
 
 static uint64_t
 CloudGetTimeStamp()
