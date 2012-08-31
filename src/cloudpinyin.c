@@ -554,16 +554,19 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
         int i;
         if (cloudpinyin->config.iCandidateOrder <= 1) {
             order = 0;
-            CloudSetClientPreedit(cloudpinyin, cacheEntry->str);
         }
         for (i = 0;i < size &&
                  (cand = FcitxCandidateWordGetByTotalIndex(candList, i));i++) {
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
-                if (i > order && i >= pagesize)
+                if (i > order && i >= pagesize) {
                     FcitxCandidateWordMoveByWord(candList, cand, order);
+                    CloudSetClientPreedit(cloudpinyin, cacheEntry->str);
+                }
                 return;
             }
         }
+        if (order == 0)
+            CloudSetClientPreedit(cloudpinyin, cacheEntry->str);
     }
 
     FcitxCandidateWord candWord;
