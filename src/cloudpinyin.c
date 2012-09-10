@@ -765,8 +765,7 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
 {
     FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
     if (!im) {
-        if (ascii_part)
-            *ascii_part = NULL;
+        *ascii_part = NULL;
         return NULL;
     }
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
@@ -828,13 +827,11 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
     free(string);
     /* no pinyin append, return NULL for off it */
     if (p[hzlength] == '\0') {
-        if (ascii_part)
-            *ascii_part = NULL;
+        *ascii_part = NULL;
         return NULL;
     } else {
         char *res = strdup(p);
-        if (ascii_part)
-            *ascii_part = res + hzlength;
+        *ascii_part = res + hzlength;
         return res;
     }
 }

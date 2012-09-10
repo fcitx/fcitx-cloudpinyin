@@ -60,7 +60,7 @@ typedef struct _CurlQueue
     struct _CurlQueue* next;
     CloudPinyinRequestType type;
     int curl_result;
-    int http_code;
+    long http_code;
     char* str;
     char* pinyin;
     size_t size;

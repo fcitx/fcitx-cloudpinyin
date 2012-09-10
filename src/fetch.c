@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #include <sys/select.h>
-#include <time.h> 
+#include <time.h>
 #include <unistd.h>
 #include <pthread.h>
 
@@ -66,11 +66,11 @@ void* FetchThread(void* arg)
 
         if (maxfd > fetch->maxfd)
             fetch->maxfd = maxfd;
-        
+
         struct timeval t, *pt;
         t.tv_sec = 1;
         t.tv_usec = 0;
-        
+
         /* if we have something to fetch, but maxfd is -1 then we give select a time out */
         if (maxfd < 0 && fetch->queue->next != NULL)
             pt = &t;
@@ -79,7 +79,7 @@ void* FetchThread(void* arg)
 
         select(fetch->maxfd + 1, &fetch->rfds, &fetch->wfds, &fetch->efds, pt);
     }
-    
+
     return NULL;
 }
 
@@ -101,8 +101,7 @@ void FetchProcessEvent(FcitxFetchThread* fetch)
             previous = fetch->queue;
             queue = fetch->queue->next;
             while (queue != NULL &&
-                    queue->curl != curl_message->easy_handle)
-            {
+                   queue->curl != curl_message->easy_handle) {
                 previous = queue;
                 queue = queue->next;
             }
@@ -110,7 +109,8 @@ void FetchProcessEvent(FcitxFetchThread* fetch)
                 curl_multi_remove_handle(fetch->curlm, queue->curl);
                 previous->next = queue->next;
                 queue->curl_result = curl_result;
-                curl_easy_getinfo(queue->curl, CURLINFO_HTTP_CODE, &queue->http_code);
+                curl_easy_getinfo(queue->curl, CURLINFO_RESPONSE_CODE,
+                                  &queue->http_code);
                 FetchFinish(fetch, queue);
             }
         }
