@@ -22,6 +22,7 @@
 #define FCITX_CLOUDPINYIN_H
 #include <curl/curl.h>
 #include <fcitx-config/fcitx-config.h>
+#include <fcitx/instance.h>
 #include <libintl.h>
 
 #define SOGOU_KEY_LENGTH 32
@@ -32,50 +33,42 @@
 
 #define _(x) dgettext("fcitx-cloudpinyin", (x))
 
-struct _FcitxInstance;
-
-typedef enum _CloudPinyinSource
-{
+typedef enum {
     CloudPinyin_Sogou = 0,
     CloudPinyin_QQ = 1,
     CloudPinyin_Google = 2,
     CloudPinyin_Baidu = 3
 } CloudPinyinSource;
 
-typedef enum _CloudPinyinRequestType
-{
+typedef enum {
     RequestKey,
     RequestPinyin
 } CloudPinyinRequestType ;
 
-typedef struct _CurlFreeListItem
-{
+typedef struct {
     boolean used;
     CURL* curl;
 } CurlFreeListItem;
 
-typedef struct _CurlQueue
-{
+typedef struct _CurlQueue {
     CURL* curl;
     struct _CurlQueue* next;
     CloudPinyinRequestType type;
     int curl_result;
-    int http_code;
+    long http_code;
     char* str;
     char* pinyin;
     size_t size;
     CloudPinyinSource source;
 } CurlQueue;
 
-typedef struct _CloudPinyinCache
-{
+typedef struct {
     char* pinyin;
     char* str;
     UT_hash_handle hh;
 } CloudPinyinCache;
 
-typedef struct _FcitxCloudPinyinConfig
-{
+typedef struct {
     FcitxGenericConfig config;
     int iCandidateOrder;
     int iMinimumPinyinLength;
@@ -83,9 +76,8 @@ typedef struct _FcitxCloudPinyinConfig
     CloudPinyinSource source;
 } FcitxCloudPinyinConfig;
 
-typedef struct _FcitxCloudPinyin
-{
-    struct _FcitxInstance* owner;
+typedef struct {
+    FcitxInstance* owner;
     FcitxCloudPinyinConfig config;
     CurlQueue* pendingQueue;
     CurlQueue* finishQueue;
@@ -101,9 +93,9 @@ typedef struct _FcitxCloudPinyin
     CloudPinyinCache* cache;
     boolean isrequestkey;
     struct _FcitxFetchThread* fetch;
-    
+
     CurlFreeListItem freeList[MAX_HANDLE];
-    
+
     pthread_t pid;
 } FcitxCloudPinyin;
 

@@ -29,7 +29,6 @@
 
 #include <fcitx/fcitx.h>
 #include <fcitx/module.h>
-#include <fcitx/instance.h>
 #include <fcitx/hook.h>
 #include <fcitx-utils/log.h>
 #include <fcitx/candidate.h>
@@ -47,7 +46,8 @@
                         strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 || \
                         strcmp(im->uniqueName, "googlepinyin") == 0 || \
                         strcmp(im->uniqueName, "sunpinyin") == 0 || \
-                        strcmp(im->uniqueName, "shuangpin") == 0))
+                        strcmp(im->uniqueName, "shuangpin") == 0 || \
+                        strcmp(im->uniqueName, "sogou-pinyin") == 0))
 
 #define CLOUDPINYIN_CHECK_PAGE_NUMBER 3
 
@@ -765,8 +765,7 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
 {
     FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
     if (!im) {
-        if (ascii_part)
-            *ascii_part = NULL;
+        *ascii_part = NULL;
         return NULL;
     }
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
@@ -828,13 +827,11 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
     free(string);
     /* no pinyin append, return NULL for off it */
     if (p[hzlength] == '\0') {
-        if (ascii_part)
-            *ascii_part = NULL;
+        *ascii_part = NULL;
         return NULL;
     } else {
         char *res = strdup(p);
-        if (ascii_part)
-            *ascii_part = res + hzlength;
+        *ascii_part = res + hzlength;
         return res;
     }
 }
