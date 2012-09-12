@@ -149,8 +149,7 @@ CloudSetClientPreedit(FcitxCloudPinyin *cloudpinyin, const char *str)
     } else {
         FcitxMessagesAddMessageAtLast(message, MSG_INPUT, "%s", str);
     }
-    if (string)
-        free(string);
+    fcitx_utils_free(string);
     FcitxInstanceUpdateClientSideUI(
         cloudpinyin->owner, FcitxInstanceGetCurrentIC(cloudpinyin->owner));
 }
@@ -830,11 +829,9 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
                     }
                 }
             }
-
             lastpos = pinyin + 1;
         }
         pinyin ++;
-
     } while(endflag);
     free(string);
     /* no pinyin append, return NULL for off it */
@@ -854,10 +851,8 @@ void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
     const char* ime_patch_key = "ime_patch_key = \"";
     size_t len = strlen(str);
     if (len == SOGOU_KEY_LENGTH + strlen(ime_patch_key) + 1
-            && strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0
-            && str[len - 1] == '\"'
-        )
-    {
+        && strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0
+        && str[len - 1] == '\"') {
         sscanf(str,"ime_patch_key = \"%s\"", cloudpinyin->key);
         cloudpinyin->initialized = true;
         cloudpinyin->key[SOGOU_KEY_LENGTH] = '\0';
