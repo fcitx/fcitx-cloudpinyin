@@ -708,6 +708,10 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
                 {
                     FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-libpinyin", 0, args);
                 }
+                else if (strcmp(im->uniqueName, "sogou-pinyin") == 0)
+                {
+                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sogoupinyin", 0, args);
+                }
             }
         }
         if (string)
