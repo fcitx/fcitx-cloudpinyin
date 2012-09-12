@@ -696,21 +696,26 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
         if (py) {
             *py = 0;
 
-            snprintf(FcitxInputStateGetOutputString(input), MAX_USER_INPUT, "%s%s", string, candWord->strWord);
+            snprintf(FcitxInputStateGetOutputString(input),
+                     MAX_USER_INPUT, "%s%s", string, candWord->strWord);
 
             FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
-            FcitxModuleFunctionArg args;
-            args.args[0] = FcitxInputStateGetOutputString(input);
-            if (im)
-            {
-                if (strcmp(im->uniqueName, "sunpinyin") == 0)
-                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sunpinyin", 1, args);
-                else if (strcmp(im->uniqueName, "shuangpin") == 0 || strcmp(im->uniqueName, "pinyin") == 0)
-                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-pinyin", 7, args);
-                else if (strcmp(im->uniqueName, "pinyin-libpinyin") == 0 ||
-                         strcmp(im->uniqueName, "shuangpin-libpinyin") == 0)
-                {
-                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-libpinyin", 0, args);
+            if (im) {
+                char *output_string = FcitxInputStateGetOutputString(input);
+                if (strcmp(im->uniqueName, "sunpinyin") == 0) {
+                    FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
+                                                  "fcitx-sunpinyin", 1,
+                                                  output_string);
+                } else if (strcmp(im->uniqueName, "shuangpin") == 0 ||
+                           strcmp(im->uniqueName, "pinyin") == 0) {
+                    FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
+                                                  "fcitx-pinyin", 7,
+                                                  output_string);
+                } else if (strcmp(im->uniqueName, "pinyin-libpinyin") == 0 ||
+                           strcmp(im->uniqueName, "shuangpin-libpinyin") == 0) {
+                    FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
+                                                  "fcitx-libpinyin", 0,
+                                                  output_string);
                 }
                 else if (strcmp(im->uniqueName, "sogou-pinyin") == 0)
                 {
@@ -793,17 +798,16 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
 
             if (*lastpos != '\0') {
                 char* result = NULL;
-                FcitxModuleFunctionArg arg;
-                arg.args[0] = lastpos;
                 boolean isshuangpin = false;
                 if (strcmp(im->uniqueName, "sunpinyin") == 0) {
-                    boolean issp = false;
-                    arg.args[1] = &issp;
-                    result = FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sunpinyin", 0, arg);
-                    isshuangpin = issp;
+                    result = FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
+                                                           "fcitx-sunpinyin", 0,
+                                                           lastpos,
+                                                           &isshuangpin);
                 } else if (strcmp(im->uniqueName, "shuangpin") == 0) {
                     isshuangpin = true;
-                    result = InvokeFunction(cloudpinyin->owner, FCITX_PINYIN, SP2QP, arg);
+                    result = InvokeVaArgs(cloudpinyin->owner, FCITX_PINYIN,
+                                          SP2QP, lastpos);
                 }
                 if (isshuangpin) {
                     if (result) {
@@ -865,8 +869,7 @@ void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
 void CloudPinyinHookForNewRequest(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
-    if (!cloudpinyin->initialized && !cloudpinyin->isrequestkey)
-    {
+    if (!cloudpinyin->initialized && !cloudpinyin->isrequestkey) {
         CloudPinyinRequestKey(cloudpinyin);
     }
 }
