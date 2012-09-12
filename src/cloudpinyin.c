@@ -29,7 +29,6 @@
 
 #include <fcitx/fcitx.h>
 #include <fcitx/module.h>
-#include <fcitx/instance.h>
 #include <fcitx/hook.h>
 #include <fcitx-utils/log.h>
 #include <fcitx/candidate.h>
@@ -47,7 +46,8 @@
                         strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 || \
                         strcmp(im->uniqueName, "googlepinyin") == 0 || \
                         strcmp(im->uniqueName, "sunpinyin") == 0 || \
-                        strcmp(im->uniqueName, "shuangpin") == 0))
+                        strcmp(im->uniqueName, "shuangpin") == 0 || \
+                        strcmp(im->uniqueName, "sogou-pinyin") == 0))
 
 #define CLOUDPINYIN_CHECK_PAGE_NUMBER 3
 
