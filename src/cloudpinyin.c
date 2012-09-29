@@ -348,12 +348,17 @@ void CloudPinyinProcessEvent(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
     char c;
+    if (!FD_ISSET(fd, cloudpinyin->pipeRecv))
+        return;
+
     while (read(cloudpinyin->pipeRecv, &c, sizeof(char)) > 0);
     pthread_mutex_lock(&cloudpinyin->finishQueueLock);
     CurlQueue* queue;
     queue = cloudpinyin->finishQueue;
+    /* this queue header is empty, so the check condition is "next" not null */
     while (queue->next != NULL)
     {
+        /* remove pivot from queue, thus pivot need to be free'd in HandleRequest */
         CurlQueue* pivot = queue->next;
         queue->next = queue->next->next;
         CloudPinyinHandleRequest(cloudpinyin, pivot);
