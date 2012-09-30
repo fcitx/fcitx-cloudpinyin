@@ -347,10 +347,11 @@ void CloudPinyinSetFD(void* arg)
 void CloudPinyinProcessEvent(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
-    char c;
-    if (!FD_ISSET(fd, cloudpinyin->pipeRecv))
+    FcitxInstance* instance = cloudpinyin->owner;
+    if (!FD_ISSET(cloudpinyin->pipeRecv, FcitxInstanceGetReadFDSet(instance)))
         return;
 
+    char c;
     while (read(cloudpinyin->pipeRecv, &c, sizeof(char)) > 0);
     pthread_mutex_lock(&cloudpinyin->finishQueueLock);
     CurlQueue* queue;
