@@ -51,8 +51,6 @@
 
 #define CLOUDPINYIN_CHECK_PAGE_NUMBER 3
 
-#define LOGLEVEL DEBUG
-
 typedef struct _CloudCandWord {
     boolean filled;
     uint64_t timestamp;
@@ -279,7 +277,7 @@ void CloudPinyinAddCandidateWord(void* arg)
 
             if (inputString) {
                 CloudPinyinCache* cacheEntry = CloudPinyinCacheLookup(cloudpinyin, inputString);
-                FcitxLog(LOGLEVEL, "%s", inputString);
+                FcitxLog(DEBUG, "%s", inputString);
                 if (cacheEntry == NULL)
                     CloudPinyinAddInputRequest(cloudpinyin, inputString);
                 _CloudPinyinAddCandidateWord(cloudpinyin, inputString);
@@ -451,7 +449,7 @@ void CloudPinyinHandleRequest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
                 strToFree = GetCurrentString(cloudpinyin, &inputString);
 
                 if (inputString) {
-                    FcitxLog(LOGLEVEL, "fill: %s %s", inputString, queue->pinyin);
+                    FcitxLog(DEBUG, "fill: %s %s", inputString, queue->pinyin);
                     if (strcmp(inputString, queue->pinyin) == 0)
                     {
                         if (CHECK_VALID_IM)
