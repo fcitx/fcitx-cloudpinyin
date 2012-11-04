@@ -33,13 +33,23 @@
 #include <fcitx-utils/log.h>
 #include <fcitx/candidate.h>
 #include <fcitx-config/xdg.h>
-#include <fcitx/module/pinyin/pydef.h>
+#include <fcitx/module/pinyin/fcitx-pinyin.h>
 
 #include "cloudpinyin.h"
 #include "fetch.h"
 #include "parse.h"
 
-#define CHECK_VALID_IM (im && \
+DEFINE_GET_ADDON("fcitx-sunpinyin", SunPinyin)
+DEFINE_GET_ADDON("fcitx-libpinyin", LibPinyin)
+DEFINE_GET_ADDON("fcitx-sogoupinyin", SogouPinyin)
+DEFINE_GET_AND_INVOKE_FUNC(SunPinyin, GetFullPinyin, 0)
+DEFINE_GET_AND_INVOKE_FUNC(SunPinyin, AddWord, 1)
+
+// Maybe not the right name, but doesn't matter....
+DEFINE_GET_AND_INVOKE_FUNC(LibPinyin, AddWord, 0)
+DEFINE_GET_AND_INVOKE_FUNC(SogouPinyin, AddWord, 0)
+
+#define CHECK_VALID_IM (im &&                                 \
                         strcmp(im->langCode, "zh_CN") == 0 && \
                         (strcmp(im->uniqueName, "pinyin") == 0 || \
                         strcmp(im->uniqueName, "pinyin-libpinyin") == 0 || \
@@ -701,24 +711,19 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
             FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
             if (im) {
                 char *output_string = FcitxInputStateGetOutputString(input);
+                FCITX_DEF_MODULE_ARGS(args, output_string);
                 if (strcmp(im->uniqueName, "sunpinyin") == 0) {
-                    FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
-                                                  "fcitx-sunpinyin", 1,
-                                                  output_string);
+                    FcitxSunPinyinInvokeAddWord(cloudpinyin->owner, args);
                 } else if (strcmp(im->uniqueName, "shuangpin") == 0 ||
                            strcmp(im->uniqueName, "pinyin") == 0) {
-                    FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
-                                                  "fcitx-pinyin", 7,
-                                                  output_string);
+                    FcitxPinyinInvokeAddUserPhrase(cloudpinyin->owner, args);
                 } else if (strcmp(im->uniqueName, "pinyin-libpinyin") == 0 ||
                            strcmp(im->uniqueName, "shuangpin-libpinyin") == 0) {
-                    FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
-                                                  "fcitx-libpinyin", 0,
-                                                  output_string);
+                    FcitxLibPinyinInvokeAddWord(cloudpinyin->owner, args);
                 }
                 else if (strcmp(im->uniqueName, "sogou-pinyin") == 0)
                 {
-                    FcitxModuleInvokeFunctionByName(cloudpinyin->owner, "fcitx-sogoupinyin", 0, args);
+                    FcitxSogouPinyinInvokeAddWord(cloudpinyin->owner, args);
                 }
             }
         }
@@ -799,14 +804,12 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
                 char* result = NULL;
                 boolean isshuangpin = false;
                 if (strcmp(im->uniqueName, "sunpinyin") == 0) {
-                    result = FcitxModuleInvokeVaArgsByName(cloudpinyin->owner,
-                                                           "fcitx-sunpinyin", 0,
-                                                           lastpos,
-                                                           &isshuangpin);
+                    FCITX_DEF_MODULE_ARGS(args, lastpos, &isshuangpin);
+                    result = FcitxSunPinyinInvokeGetFullPinyin(
+                        cloudpinyin->owner, args);
                 } else if (strcmp(im->uniqueName, "shuangpin") == 0) {
                     isshuangpin = true;
-                    result = InvokeVaArgs(cloudpinyin->owner, FCITX_PINYIN,
-                                          SP2QP, lastpos);
+                    result = FcitxPinyinSP2QP(cloudpinyin->owner, lastpos);
                 }
                 if (isshuangpin) {
                     if (result) {
