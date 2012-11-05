@@ -1,5 +1,0 @@
-# List of source files which contain translatable strings.
-./po/desc.po
-./po/conf.po
-@REL_SOURCE_ROOT@/src/cloudpinyin.c
-@REL_SOURCE_ROOT@/src/fcitx-cloudpinyin.conf.in
