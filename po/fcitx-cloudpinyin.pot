@@ -7,60 +7,61 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-08-29 18:07-0400\n"
+"Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
+"POT-Creation-Date: 2012-12-01 18:57-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: LANG\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:5
-msgid "Cloud Pinyin Candidate Word Order"
+#: src/cloudpinyin.c:607
+msgid " (via cloud)"
 msgstr ""
 
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:11
-msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
-msgstr ""
-
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:16
-msgid "Don't Show the 'via cloud' hint"
-msgstr ""
-
-#: /home/saber/Develop/fcitx-cloudpinyin/src/fcitx-cloudpinyin.desc:21
-msgid "Cloud Pinyin Source"
-msgstr ""
-
-# unknown
-msgid "CloudPinyin"
-msgstr ""
-
-#: unknown
-msgid "Baidu"
-msgstr ""
-
-#: unknown
-msgid "Google"
-msgstr ""
-
-#: unknown
-msgid "QQ"
-msgstr ""
-
-#: unknown
-msgid "Sogou"
-msgstr ""
-
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:1
+#: src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
 msgstr ""
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/tmp/fcitx-cloudpinyin.conf.in.h:2
+#: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
 msgstr ""
 
-#: /home/saber/Develop/fcitx-cloudpinyin/build/po/../..//src/cloudpinyin.c:588
-msgid " (via cloud)"
+#: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
+#: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
+msgid "CloudPinyin"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:5
+msgid "Cloud Pinyin Candidate Word Order"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:11
+msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:16
+msgid "Don't Show the 'via cloud' hint"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:21
+msgid "Cloud Pinyin Source"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:23
+msgid "Sogou"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:24
+msgid "QQ"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:25
+msgid "Google"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:26
+msgid "Baidu"
 msgstr ""
