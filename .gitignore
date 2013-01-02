@@ -1,13 +1,13 @@
 *~
-build/*
+build*/
 .*
 !.git*
 .git/
+*.tar.*
 *.kdev4
 *.kate-swp
 *.orig
 tags
 astyle.sh
 cscope.*
-.kdev_include_paths
-.directory
+*.part
