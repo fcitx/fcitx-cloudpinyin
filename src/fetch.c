@@ -43,9 +43,14 @@ void* FetchThread(void* arg)
     curl_multi_setopt(fetch->curlm, CURLMOPT_MAXCONNECTS, MAX_HANDLE);
 
     while (true) {
-
+        boolean endflag = false;
         char c;
-        while (read(fetch->pipeRecv, &c, sizeof(char)) > 0);
+        while (read(fetch->pipeRecv, &c, sizeof(char)) > 0) {
+            if (c == 1)
+                endflag = true;
+        }
+        if (endflag)
+            break;
 
         FetchProcessPendingRequest(fetch);
         FetchProcessEvent(fetch);

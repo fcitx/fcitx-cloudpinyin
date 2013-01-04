@@ -376,7 +376,48 @@ void CloudPinyinProcessEvent(void* arg)
 
 void CloudPinyinDestroy(void* arg)
 {
+    FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
+    char c = 1;
+    write(cloudpinyin->pipeNotify, &c, sizeof(char));
+    pthread_join(cloudpinyin->pid, NULL);
+    pthread_mutex_destroy(&cloudpinyin->pendingQueueLock);
+    pthread_mutex_destroy(&cloudpinyin->finishQueueLock);
+    while (cloudpinyin->cache)
+    {
+        CloudPinyinCache* head = cloudpinyin->cache;
+        HASH_DEL(cloudpinyin->cache, cloudpinyin->cache);
+        free(head->pinyin);
+        free(head->str);
+        free(head);
+    }
 
+    close(cloudpinyin->pipeRecv);
+    close(cloudpinyin->pipeNotify);
+
+    close(cloudpinyin->fetch->pipeRecv);
+    close(cloudpinyin->fetch->pipeNotify);
+    int i = 0;
+    for (i = 0; i < MAX_HANDLE; i ++) {
+        if (cloudpinyin->freeList[i].curl) {
+            curl_easy_cleanup(cloudpinyin->freeList[i].curl);
+        }
+    }
+
+    curl_multi_cleanup(cloudpinyin->fetch->curlm);
+#define _FREE_QUEUE(NAME) \
+    while(NAME) { \
+        CurlQueue* queue = NAME; \
+        NAME = NAME->next; \
+        fcitx_utils_free(queue->str); \
+        fcitx_utils_free(queue->pinyin); \
+        free(queue); \
+    }
+    _FREE_QUEUE(cloudpinyin->pendingQueue)
+    _FREE_QUEUE(cloudpinyin->finishQueue)
+    _FREE_QUEUE(cloudpinyin->fetch->queue)
+    FcitxConfigFree(&cloudpinyin->config.config);
+    free(cloudpinyin->fetch);
+    free(cloudpinyin);
 }
 
 void CloudPinyinReloadConfig(void* arg)
@@ -485,10 +526,8 @@ void CloudPinyinHandleRequest(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
         }
     }
     CloudPinyinReleaseCurlHandle(cloudpinyin, queue->curl);
-    if (queue->str)
-        free(queue->str);
-    if (queue->pinyin)
-        free(queue->pinyin);
+    fcitx_utils_free(queue->str);
+    fcitx_utils_free(queue->pinyin);
     free(queue);
 }
 
