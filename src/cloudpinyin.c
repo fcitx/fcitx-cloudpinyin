@@ -683,12 +683,14 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin,
         for (i = 0;i < size &&
                  (cand = FcitxCandidateWordGetByTotalIndex(candList, i));i++) {
             if (strcmp(cand->strWord, cacheEntry->str) == 0) {
+                uint64_t ts = cloudCand->timestamp;
+                uint64_t curTs = CloudGetTimeStamp();
                 FcitxCandidateWordRemove(candList, candWord);
                 /* if cloud word is not on the first page.. impossible */
                 if (cloudidx < pagesize) {
                     /* if the duplication before cloud word */
                     if (i < cloudidx) {
-                        if (CloudGetTimeStamp() - cloudCand->timestamp
+                        if (curTs - ts
                             > LOADING_TIME_QUICK_THRESHOLD) {
                             FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
                             FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
@@ -699,8 +701,7 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin,
                         if (i >= pagesize) {
                             FcitxCandidateWordMove(candList, i - 1, cloudidx);
                         } else {
-                            if (CloudGetTimeStamp() - cloudCand->timestamp
-                                > LOADING_TIME_QUICK_THRESHOLD) {
+                            if (curTs - ts > LOADING_TIME_QUICK_THRESHOLD) {
                                 FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
                                 FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
                                 if (placeHolder && placeHolder->strWord == NULL)
