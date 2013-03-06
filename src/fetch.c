@@ -128,8 +128,6 @@ void FetchProcessEvent(FcitxFetchThread* fetch)
 
 void FetchProcessPendingRequest(FcitxFetchThread* fetch)
 {
-    boolean still_running;
-
     /* pull all item from pending queue and move to fetch queue */
     pthread_mutex_lock(fetch->pendingQueueLock);
     FcitxCloudPinyin *cloudpinyin = fetch->owner;
@@ -147,18 +145,9 @@ void FetchProcessPendingRequest(FcitxFetchThread* fetch)
     pthread_mutex_unlock(fetch->pendingQueueLock);
     /* new item start from here */
     tail = tail->next;
-    boolean flag = false;
     while(tail) {
         curl_multi_add_handle(fetch->curlm, tail->curl);
         tail = tail->next;
-        flag = true;
-    }
-
-    if (flag) {
-        CURLMcode mcode;
-        do {
-            mcode = curl_multi_perform(fetch->curlm, &still_running);
-        } while (mcode == CURLM_CALL_MULTI_PERFORM);
     }
 }
 
