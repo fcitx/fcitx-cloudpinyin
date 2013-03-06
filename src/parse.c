@@ -26,6 +26,22 @@ static inline unsigned char tohex(char ch)
     return 0;
 }
 
+void SogouParseKey(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
+{
+    char* str = fcitx_utils_trim(queue->str);
+    const char* ime_patch_key = "ime_patch_key = \"";
+    size_t len = strlen(str);
+    if (len == SOGOU_KEY_LENGTH + strlen(ime_patch_key) + 1
+        && strncmp(str, ime_patch_key, strlen(ime_patch_key)) == 0
+        && str[len - 1] == '\"') {
+        sscanf(str,"ime_patch_key = \"%s\"", cloudpinyin->key);
+        cloudpinyin->initialized = true;
+        cloudpinyin->key[SOGOU_KEY_LENGTH] = '\0';
+    }
+
+    free(str);
+}
+
 char* MapSogouStringToHalf(const char* string)
 {
     const char* s = string;
