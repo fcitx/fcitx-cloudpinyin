@@ -45,12 +45,15 @@ void* FetchThread(void* arg)
     while (true) {
         boolean endflag = false;
         char c;
-        while (read(fetch->pipeRecv, &c, sizeof(char)) > 0) {
-            if (c == 1)
+        int r = 0;
+        while ((r = read(fetch->pipeRecv, &c, sizeof(char))) > 0) {
+            if (c == 1) {
                 endflag = true;
+            }
         }
-        if (endflag)
+        if (r == 0 || endflag) {
             break;
+        }
 
         FetchProcessPendingRequest(fetch);
         FetchProcessEvent(fetch);
@@ -130,10 +133,11 @@ void FetchProcessPendingRequest(FcitxFetchThread* fetch)
     /* pull all item from pending queue and move to fetch queue */
     pthread_mutex_lock(fetch->pendingQueueLock);
     FcitxCloudPinyin *cloudpinyin = fetch->owner;
-    CurlQueue* head = cloudpinyin->pendingQueue;
-    CurlQueue* tail = fetch->queue;
-    while(tail->next)
+    volatile CurlQueue* head = cloudpinyin->pendingQueue;
+    volatile CurlQueue* tail = fetch->queue;
+    while(tail->next) {
         tail = tail->next;
+    }
     while(head->next) {
         CurlQueue* item = head->next;
         item->next = tail->next;
@@ -164,9 +168,10 @@ void FetchFinish(FcitxFetchThread* fetch, CurlQueue* queue)
 
     FcitxCloudPinyin *cloudpinyin = fetch->owner;
 
-    CurlQueue* head = cloudpinyin->finishQueue;
-    while(head->next)
+    volatile CurlQueue* head = cloudpinyin->finishQueue;
+    while(head->next) {
         head = head->next;
+    }
     head->next = queue;
     queue->next = NULL;
     pthread_mutex_unlock(fetch->finishQueueLock);
