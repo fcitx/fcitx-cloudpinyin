@@ -88,14 +88,15 @@ static CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, co
 static INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWord);
 static void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
 static void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin);
-static boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
-static void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs);
+static boolean CloudPinyinConfigLoad(FcitxCloudPinyinConfig* fs);
+static void CloudPinyinConfigSave(FcitxCloudPinyinConfig* fs);
 static char *GetCurrentString(FcitxCloudPinyin* cloudpinyin,
                               char **ascii_part);
 static void CloudPinyinHookForNewRequest(void* arg);
 static CURL* CloudPinyinGetFreeCurlHandle(FcitxCloudPinyin* cloudpinyin);
 static void CloudPinyinReleaseCurlHandle(FcitxCloudPinyin* cloudpinyin,
                                          CURL* curl);
+static INPUT_RETURN_VALUE CloudPinyinToggle(void* arg);
 
 CloudPinyinEngine engine[4] =
 {
@@ -172,7 +173,7 @@ void* CloudPinyinCreate(FcitxInstance* instance)
     int pipe1[2];
     int pipe2[2];
 
-    if (!LoadCloudPinyinConfig(&cloudpinyin->config))
+    if (!CloudPinyinConfigLoad(&cloudpinyin->config))
     {
         free(cloudpinyin);
         return NULL;
@@ -227,6 +228,13 @@ void* CloudPinyinCreate(FcitxInstance* instance)
     FcitxInstanceRegisterInputUnFocusHook(instance, hook);
     FcitxInstanceRegisterTriggerOnHook(instance, hook);
 
+    FcitxHotkeyHook hkhook;
+    hkhook.arg = cloudpinyin;
+    hkhook.hotkey = cloudpinyin->config.hkToggle.hotkey;
+    hkhook.hotkeyhandle = CloudPinyinToggle;
+
+    FcitxInstanceRegisterHotkeyFilter(instance, hkhook);
+
     pthread_create(&cloudpinyin->pid, NULL, FetchThread, fetch);
 
     CloudPinyinRequestKey(cloudpinyin);
@@ -272,7 +280,7 @@ void CloudPinyinAddCandidateWord(void* arg)
     FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
     FcitxInputState* input = FcitxInstanceGetInputState(cloudpinyin->owner);
 
-    if (cloudpinyin->initialized == false)
+    if (!cloudpinyin->initialized || !cloudpinyin->config.bEnabled)
         return;
 
     /* check whether the current im is pinyin */
@@ -424,7 +432,7 @@ void CloudPinyinReloadConfig(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
     CloudPinyinSource previousSource = cloudpinyin->config.source;
-    LoadCloudPinyinConfig(&cloudpinyin->config);
+    CloudPinyinConfigLoad(&cloudpinyin->config);
     if (previousSource != cloudpinyin->config.source)
     {
         cloudpinyin->initialized = false;
@@ -587,6 +595,21 @@ CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const cha
         free(head);
     }
     return cacheEntry;
+}
+
+INPUT_RETURN_VALUE CloudPinyinToggle(void* arg)
+{
+    FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
+    FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
+
+    if (CHECK_VALID_IM) {
+        cloudpinyin->config.bEnabled = !cloudpinyin->config.bEnabled;
+        CloudPinyinConfigSave(&cloudpinyin->config);
+        // TODO: add a notification here
+
+        return IRV_DO_NOTHING;
+    }
+    return IRV_TO_PROCESS;
 }
 
 void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pinyin)
@@ -781,7 +804,7 @@ INPUT_RETURN_VALUE CloudPinyinGetCandWord(void* arg, FcitxCandidateWord* candWor
  *
  * @param Bool is reload or not
  **/
-boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
+boolean CloudPinyinConfigLoad(FcitxCloudPinyinConfig* fs)
 {
     FcitxConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
     if (configDesc == NULL)
@@ -792,7 +815,7 @@ boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
     if (!fp)
     {
         if (errno == ENOENT)
-            SaveCloudPinyinConfig(fs);
+            CloudPinyinConfigSave(fs);
     }
     FcitxConfigFile *cfile = FcitxConfigParseConfigFileFp(fp, configDesc);
     FcitxCloudPinyinConfigConfigBind(fs, cfile, configDesc);
@@ -809,7 +832,7 @@ boolean LoadCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
  *
  * @return void
  **/
-void SaveCloudPinyinConfig(FcitxCloudPinyinConfig* fs)
+void CloudPinyinConfigSave(FcitxCloudPinyinConfig* fs)
 {
     FcitxConfigFileDesc *configDesc = GetCloudPinyinConfigDesc();
     FILE *fp = FcitxXDGGetFileUserWithPrefix("conf", "fcitx-cloudpinyin.config", "w", NULL);

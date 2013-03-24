@@ -74,6 +74,8 @@ typedef struct {
     int iMinimumPinyinLength;
     boolean bDontShowSource;
     CloudPinyinSource source;
+    FcitxHotkeys hkToggle;
+    boolean bEnabled;
 } FcitxCloudPinyinConfig;
 
 typedef struct {

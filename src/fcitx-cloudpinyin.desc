@@ -25,5 +25,16 @@ Enum1=QQ
 Enum2=Google
 Enum3=Baidu
 
+[CloudPinyin/ToggleKey]
+Type=Hotkey
+DefaultValue=
+Description=Toggle Cloud Pinyin enabled status
+LongDescription=Disable Cloud Pinyin When you are using mobile can save your network
+
+[CloudPinyin/Enabled]
+Type=Boolean
+DefaultValue=True
+Description=Enabled
+
 [DescriptionFile]
 LocaleDomain=fcitx-cloudpinyin

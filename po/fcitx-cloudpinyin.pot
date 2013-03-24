@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2012-12-01 18:57-0500\n"
+"POT-Creation-Date: 2013-03-24 13:00-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/cloudpinyin.c:607
+#: src/cloudpinyin.c:669
 msgid " (via cloud)"
 msgstr ""
 
@@ -31,6 +31,7 @@ msgstr ""
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
+#: src/fcitx-cloudpinyin.desc:28 src/fcitx-cloudpinyin.desc:34
 msgid "CloudPinyin"
 msgstr ""
 
@@ -64,4 +65,16 @@ msgstr ""
 
 #: src/fcitx-cloudpinyin.desc:26
 msgid "Baidu"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:31
+msgid "Toggle Cloud Pinyin enabled status"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:32
+msgid "Disable Cloud Pinyin When you are using mobile can save your network"
+msgstr ""
+
+#: src/fcitx-cloudpinyin.desc:37
+msgid "Enabled"
 msgstr ""
