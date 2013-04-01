@@ -713,13 +713,11 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin,
                 if (cloudidx < pagesize) {
                     if (i >= pagesize) {
                         FcitxCandidateWordMove(candList, i - 1, cloudidx);
-                    } else {
-                        if (curTs - ts > LOADING_TIME_QUICK_THRESHOLD) {
-                            FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
-                            FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
-                            if (placeHolder && placeHolder->strWord == NULL)
-                                placeHolder->strWord = strdup(DUP_PLACE_HOLDER);
-                        }
+                    } else if (curTs - ts > LOADING_TIME_QUICK_THRESHOLD) {
+                        FcitxCandidateWordInsertPlaceHolder(candList, cloudidx);
+                        FcitxCandidateWord* placeHolder = FcitxCandidateWordGetByTotalIndex(candList, cloudidx);
+                        if (placeHolder && placeHolder->strWord == NULL)
+                            placeHolder->strWord = strdup(DUP_PLACE_HOLDER);
                     }
                 }
                 FcitxUIUpdateInputWindow(cloudpinyin->owner);
