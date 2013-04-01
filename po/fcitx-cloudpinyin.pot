@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/cloudpinyin.c:669
-msgid " (via cloud)"
+msgid " ☁"
 msgstr ""
 
 #: src/fcitx-cloudpinyin.conf.in:3
@@ -44,7 +44,7 @@ msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
 msgstr ""
 
 #: src/fcitx-cloudpinyin.desc:16
-msgid "Don't Show the 'via cloud' hint"
+msgid "Don't Show the '☁' hint"
 msgstr ""
 
 #: src/fcitx-cloudpinyin.desc:21

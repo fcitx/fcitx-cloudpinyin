@@ -20,8 +20,8 @@ msgstr ""
 "X-Generator: Lokalize 1.5\n"
 
 #: src/cloudpinyin.c:669
-msgid " (via cloud)"
-msgstr " (来自云)"
+msgid "☁"
+msgstr "☁"
 
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
@@ -54,8 +54,8 @@ msgid "Disable Cloud Pinyin When you are using mobile can save your network"
 msgstr "在使用移动网络时禁用云拼音可以节省流量"
 
 #: src/fcitx-cloudpinyin.desc:16
-msgid "Don't Show the 'via cloud' hint"
-msgstr "不显示‘来自云’提示"
+msgid "Don't Show the '☁' hint"
+msgstr "不显示‘☁’提示"
 
 #: src/fcitx-cloudpinyin.desc:37
 msgid "Enabled"
