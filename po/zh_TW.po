@@ -21,8 +21,8 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: src/cloudpinyin.c:669
-msgid "☁"
-msgstr "☁"
+msgid " ☁"
+msgstr " ☁"
 
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
