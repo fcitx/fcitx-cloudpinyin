@@ -20,10 +20,6 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/cloudpinyin.c:669
-msgid " ☁"
-msgstr " ☁"
-
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
 msgstr "為拼音輸入法加入雲拼音支援"

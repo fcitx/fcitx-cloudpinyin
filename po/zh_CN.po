@@ -19,10 +19,6 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Lokalize 1.5\n"
 
-#: src/cloudpinyin.c:669
-msgid " ☁"
-msgstr " ☁"
-
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
 msgstr "为拼音输入法加入云拼音支持"

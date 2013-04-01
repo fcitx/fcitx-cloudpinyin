@@ -17,10 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/cloudpinyin.c:669
-msgid " ☁"
-msgstr ""
-
 #: src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
 msgstr ""

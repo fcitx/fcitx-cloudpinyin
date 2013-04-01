@@ -666,7 +666,7 @@ void _CloudPinyinAddCandidateWord(FcitxCloudPinyin* cloudpinyin, const char* pin
     if (cloudpinyin->config.bDontShowSource)
         candWord.strExtra = NULL;
     else {
-        candWord.strExtra = strdup(_(" ☁"));
+        candWord.strExtra = strdup(" ☁");
         candWord.extraType = MSG_TIPS;
     }
 
