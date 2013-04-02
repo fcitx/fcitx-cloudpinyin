@@ -709,6 +709,12 @@ void CloudPinyinFillCandidateWord(FcitxCloudPinyin* cloudpinyin,
                 uint64_t ts = cloudCand->timestamp;
                 uint64_t curTs = CloudGetTimeStamp();
                 FcitxCandidateWordRemove(candList, candWord);
+                if (cloudpinyin->config.bDontShowSource) {
+                    cand->strExtra = NULL;
+                } else {
+                    cand->strExtra = strdup(cloudpinyin->config.CloudWordHint);
+                    cand->extraType = MSG_TIPS;
+                }
                 /* if cloud word is not on the first page.. impossible */
                 if (cloudidx < pagesize) {
                     /* if the duplication before cloud word */
