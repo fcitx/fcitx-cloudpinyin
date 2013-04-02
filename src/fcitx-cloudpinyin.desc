@@ -13,7 +13,12 @@ Description=Minimum Length of Pinyin To Trigger Cloud Pinyin
 [CloudPinyin/DontShowSource]
 Type=Boolean
 DefaultValue=True
-Description=Don't Show the '☁' hint
+Description=Don't Show the cloud word hint
+
+[CloudPinyin/CloudWordHint]
+Type=String
+DefaultValue= ☁
+Description=Cloud word hint
 
 [CloudPinyin/Source]
 Type=Enum

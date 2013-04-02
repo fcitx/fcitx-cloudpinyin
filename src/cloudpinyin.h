@@ -73,6 +73,7 @@ typedef struct {
     int iCandidateOrder;
     int iMinimumPinyinLength;
     boolean bDontShowSource;
+    char* CloudWordHint;
     CloudPinyinSource source;
     FcitxHotkeys hkToggle;
     boolean bEnabled;

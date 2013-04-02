@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-03-24 13:00-0400\n"
+"POT-Creation-Date: 2013-04-02 13:41+0800\n"
 "PO-Revision-Date: 2012-09-11 00:12+0000\n"
 "Last-Translator: Alisha <alisha.4m@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/fcitx/"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
 msgstr "為拼音輸入法加入雲拼音支援"
 
-#: src/fcitx-cloudpinyin.desc:26
+#: src/fcitx-cloudpinyin.desc:31
 msgid "Baidu"
 msgstr "百度"
 
@@ -36,29 +36,34 @@ msgstr "雲拼音"
 msgid "Cloud Pinyin Candidate Word Order"
 msgstr "雲拼音候選字順序"
 
-#: src/fcitx-cloudpinyin.desc:21
+#: src/fcitx-cloudpinyin.desc:26
 msgid "Cloud Pinyin Source"
 msgstr "雲拼音來源"
 
+#: src/fcitx-cloudpinyin.desc:21
+msgid "Cloud word hint"
+msgstr "雲提示"
+
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
-#: src/fcitx-cloudpinyin.desc:28 src/fcitx-cloudpinyin.desc:34
+#: src/fcitx-cloudpinyin.desc:23 src/fcitx-cloudpinyin.desc:33
+#: src/fcitx-cloudpinyin.desc:39
 msgid "CloudPinyin"
 msgstr "雲拼音"
 
-#: src/fcitx-cloudpinyin.desc:32
+#: src/fcitx-cloudpinyin.desc:37
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
 msgstr ""
 
 #: src/fcitx-cloudpinyin.desc:16
-msgid "Don't Show the '☁' hint"
-msgstr "不顯示「☁」提示"
+msgid "Don't Show the cloud word hint"
+msgstr "不顯示雲提示"
 
-#: src/fcitx-cloudpinyin.desc:37
+#: src/fcitx-cloudpinyin.desc:42
 msgid "Enabled"
 msgstr ""
 
-#: src/fcitx-cloudpinyin.desc:25
+#: src/fcitx-cloudpinyin.desc:30
 msgid "Google"
 msgstr "Google"
 
@@ -66,14 +71,14 @@ msgstr "Google"
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
 msgstr "最小觸發雲拼音的拼音長度"
 
-#: src/fcitx-cloudpinyin.desc:24
+#: src/fcitx-cloudpinyin.desc:29
 msgid "QQ"
 msgstr "QQ"
 
-#: src/fcitx-cloudpinyin.desc:23
+#: src/fcitx-cloudpinyin.desc:28
 msgid "Sogou"
 msgstr "搜狗"
 
-#: src/fcitx-cloudpinyin.desc:31
+#: src/fcitx-cloudpinyin.desc:36
 msgid "Toggle Cloud Pinyin enabled status"
 msgstr ""
