@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-#   <alisha.4m@gmail.com>, 2012.
-# Alisha <alisha.4m@gmail.com>, 2012.
+# Alisha <alisha.4m@gmail.com>, 2012
+# Alisha <alisha.4m@gmail.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-03-24 13:00-0400\n"
-"PO-Revision-Date: 2012-09-11 00:12+0000\n"
+"POT-Creation-Date: 2013-04-27 00:01-0400\n"
+"PO-Revision-Date: 2013-04-26 13:14+0000\n"
 "Last-Translator: Alisha <alisha.4m@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/fcitx/"
 "language/zh_TW/)\n"
@@ -52,7 +52,7 @@ msgstr "雲拼音"
 
 #: src/fcitx-cloudpinyin.desc:32
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
-msgstr ""
+msgstr "使用行動網路時停用雲拼音以節省流量"
 
 #: src/fcitx-cloudpinyin.desc:16
 msgid "Don't Show the 'via cloud' hint"
@@ -60,7 +60,7 @@ msgstr "不顯示「來自雲」提示"
 
 #: src/fcitx-cloudpinyin.desc:37
 msgid "Enabled"
-msgstr ""
+msgstr "啟用"
 
 #: src/fcitx-cloudpinyin.desc:25
 msgid "Google"
@@ -80,4 +80,4 @@ msgstr "搜狗"
 
 #: src/fcitx-cloudpinyin.desc:31
 msgid "Toggle Cloud Pinyin enabled status"
-msgstr ""
+msgstr "切換雲拼音啟用狀態"
