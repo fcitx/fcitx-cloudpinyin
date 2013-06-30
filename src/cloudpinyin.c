@@ -34,6 +34,7 @@
 #include <fcitx/candidate.h>
 #include <fcitx-config/xdg.h>
 #include <fcitx/module/pinyin/fcitx-pinyin.h>
+#include <fcitx/module/freedesktop-notify/fcitx-freedesktop-notify.h>
 
 #include "cloudpinyin.h"
 #include "fetch.h"
@@ -600,10 +601,18 @@ CloudPinyinCache* CloudPinyinAddToCache(FcitxCloudPinyin* cloudpinyin, const cha
 INPUT_RETURN_VALUE CloudPinyinToggle(void* arg)
 {
     FcitxCloudPinyin* cloudpinyin = (FcitxCloudPinyin*) arg;
+    FcitxInstance* instance = cloudpinyin->owner;
     FcitxIM* im = FcitxInstanceGetCurrentIM(cloudpinyin->owner);
 
     if (CHECK_VALID_IM) {
         cloudpinyin->config.bEnabled = !cloudpinyin->config.bEnabled;
+
+        FcitxFreeDesktopNotifyShowAddonTip(
+            instance, "fcitx-punc-toggle",
+            "fcitx",
+            _("Cloud Pinyin"),
+            cloudpinyin->config.bEnabled ? _("Cloud Pinyin is Enabled.") :
+                                    _("Cloud Pinyin is Disabled."));
         CloudPinyinConfigSave(&cloudpinyin->config);
         // TODO: add a notification here
 
