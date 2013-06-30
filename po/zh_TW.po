@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-06-30 01:44-0400\n"
-"PO-Revision-Date: 2013-04-29 09:35+0000\n"
+"POT-Creation-Date: 2013-06-30 06:02-0400\n"
+"PO-Revision-Date: 2013-06-30 05:50+0000\n"
 "Last-Translator: Xuetian Weng <wengxt@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/fcitx/"
 "language/zh_TW/)\n"
@@ -45,14 +45,12 @@ msgid "Cloud Pinyin Source"
 msgstr "雲拼音來源"
 
 #: src/cloudpinyin.c:615
-#, fuzzy
 msgid "Cloud Pinyin is Disabled."
-msgstr "雲拼音"
+msgstr ""
 
 #: src/cloudpinyin.c:614
-#, fuzzy
 msgid "Cloud Pinyin is Enabled."
-msgstr "雲拼音"
+msgstr ""
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
