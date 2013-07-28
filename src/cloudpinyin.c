@@ -608,7 +608,7 @@ INPUT_RETURN_VALUE CloudPinyinToggle(void* arg)
         cloudpinyin->config.bEnabled = !cloudpinyin->config.bEnabled;
 
         FcitxFreeDesktopNotifyShowAddonTip(
-            instance, "fcitx-punc-toggle",
+            instance, "fcitx-cloudpinyin-toggle",
             "fcitx",
             _("Cloud Pinyin"),
             cloudpinyin->config.bEnabled ? _("Cloud Pinyin is Enabled.") :
