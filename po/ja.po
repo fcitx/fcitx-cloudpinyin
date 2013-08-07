@@ -4,13 +4,14 @@
 #
 # Translators:
 # しろう, 2013
+# しろう, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-06-30 06:02-0400\n"
-"PO-Revision-Date: 2013-06-30 05:50+0000\n"
-"Last-Translator: Xuetian Weng <wengxt@gmail.com>\n"
+"POT-Creation-Date: 2013-08-07 12:02-0400\n"
+"PO-Revision-Date: 2013-08-07 15:02+0000\n"
+"Last-Translator: しろう\n"
 "Language-Team: Japanese (http://www.transifex.com/projects/p/fcitx/language/"
 "ja/)\n"
 "Language: ja\n"
@@ -45,11 +46,11 @@ msgstr "クラウド Pinyin 提供元"
 
 #: src/cloudpinyin.c:615
 msgid "Cloud Pinyin is Disabled."
-msgstr ""
+msgstr "クラウド Pinyinが無効になりました。"
 
 #: src/cloudpinyin.c:614
 msgid "Cloud Pinyin is Enabled."
-msgstr ""
+msgstr "クラウド Pinyinが有効になりました。"
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
@@ -60,6 +61,7 @@ msgstr "クラウド Pinyin"
 #: src/fcitx-cloudpinyin.desc:32
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
 msgstr ""
+"モバイル端末の時にネットワークを消費しないために、クラウド Pinyinを無効化する"
 
 #: src/fcitx-cloudpinyin.desc:16
 msgid "Don't Show the 'via cloud' hint"
