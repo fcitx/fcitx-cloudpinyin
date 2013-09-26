@@ -170,6 +170,7 @@ void* CloudPinyinCreate(FcitxInstance* instance)
 {
     FcitxCloudPinyin *cloudpinyin = fcitx_utils_new(FcitxCloudPinyin);
     bindtextdomain("fcitx-cloudpinyin", LOCALEDIR);
+    bind_textdomain_codeset("fcitx-cloudpinyin", "UTF-8");
     cloudpinyin->owner = instance;
     int pipe1[2];
     int pipe2[2];
