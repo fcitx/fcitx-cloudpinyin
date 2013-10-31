@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-06-30 06:02-0400\n"
-"PO-Revision-Date: 2013-06-30 05:50+0000\n"
-"Last-Translator: Xuetian Weng <wengxt@gmail.com>\n"
+"POT-Creation-Date: 2013-10-31 06:02-0400\n"
+"PO-Revision-Date: 2013-10-31 05:29+0000\n"
+"Last-Translator: mar well <marwell.1980@freenet.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/fcitx/language/"
 "de/)\n"
 "Language: de\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/cloudpinyin.c:678
+#: src/cloudpinyin.c:679
 msgid " (via cloud)"
 msgstr " (via cloud)"
 
@@ -31,7 +31,7 @@ msgstr "Füge Cloud Pinyin Unterstützung zur Pinyin Eingabemethode hinzu"
 msgid "Baidu"
 msgstr "Baidu"
 
-#: src/cloudpinyin.c:613 src/fcitx-cloudpinyin.conf.in:3
+#: src/cloudpinyin.c:614 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
 msgstr "Cloud Pinyin"
 
@@ -43,13 +43,13 @@ msgstr "Cloud Pinyin - Reihenfolge der Kandidaten"
 msgid "Cloud Pinyin Source"
 msgstr "Cloudpinyin Quelle"
 
-#: src/cloudpinyin.c:615
+#: src/cloudpinyin.c:616
 msgid "Cloud Pinyin is Disabled."
-msgstr ""
+msgstr "Cloudpinyin ist ausgeschaltet"
 
-#: src/cloudpinyin.c:614
+#: src/cloudpinyin.c:615
 msgid "Cloud Pinyin is Enabled."
-msgstr ""
+msgstr "Cloudpinyin ist eingeschaltet"
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
