@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-06-30 06:02-0400\n"
+"POT-Creation-Date: 2013-11-11 12:02-0500\n"
 "PO-Revision-Date: 2013-06-30 05:50+0000\n"
 "Last-Translator: Xuetian Weng <wengxt@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/fcitx/"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/cloudpinyin.c:678
+#: src/cloudpinyin.c:681
 msgid " (via cloud)"
 msgstr "（來自雲）"
 
@@ -28,11 +28,11 @@ msgstr "（來自雲）"
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
 msgstr "為拼音輸入法加入雲拼音支援"
 
-#: src/fcitx-cloudpinyin.desc:26
+#: src/fcitx-cloudpinyin.desc:24
 msgid "Baidu"
 msgstr "百度"
 
-#: src/cloudpinyin.c:613 src/fcitx-cloudpinyin.conf.in:3
+#: src/cloudpinyin.c:616 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
 msgstr "雲拼音"
 
@@ -44,21 +44,21 @@ msgstr "雲拼音候選字順序"
 msgid "Cloud Pinyin Source"
 msgstr "雲拼音來源"
 
-#: src/cloudpinyin.c:615
+#: src/cloudpinyin.c:618
 msgid "Cloud Pinyin is Disabled."
 msgstr ""
 
-#: src/cloudpinyin.c:614
+#: src/cloudpinyin.c:617
 msgid "Cloud Pinyin is Enabled."
 msgstr ""
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
-#: src/fcitx-cloudpinyin.desc:28 src/fcitx-cloudpinyin.desc:34
+#: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
 msgid "CloudPinyin"
 msgstr "雲拼音"
 
-#: src/fcitx-cloudpinyin.desc:32
+#: src/fcitx-cloudpinyin.desc:30
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
 msgstr "使用行動網路時停用雲拼音以節省流量"
 
@@ -66,11 +66,11 @@ msgstr "使用行動網路時停用雲拼音以節省流量"
 msgid "Don't Show the 'via cloud' hint"
 msgstr "不顯示「來自雲」提示"
 
-#: src/fcitx-cloudpinyin.desc:37
+#: src/fcitx-cloudpinyin.desc:35
 msgid "Enabled"
 msgstr "啟用"
 
-#: src/fcitx-cloudpinyin.desc:25
+#: src/fcitx-cloudpinyin.desc:23
 msgid "Google"
 msgstr "Google"
 
@@ -78,14 +78,12 @@ msgstr "Google"
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
 msgstr "最小觸發雲拼音的拼音長度"
 
-#: src/fcitx-cloudpinyin.desc:24
-msgid "QQ"
-msgstr "QQ"
-
-#: src/fcitx-cloudpinyin.desc:23
-msgid "Sogou"
-msgstr "搜狗"
-
-#: src/fcitx-cloudpinyin.desc:31
+#: src/fcitx-cloudpinyin.desc:29
 msgid "Toggle Cloud Pinyin enabled status"
 msgstr "切換雲拼音啟用狀態"
+
+#~ msgid "QQ"
+#~ msgstr "QQ"
+
+#~ msgid "Sogou"
+#~ msgstr "搜狗"
