@@ -19,11 +19,9 @@ Description=Don't Show the 'via cloud' hint
 Type=Enum
 DefaultValue=Google
 Description=Cloud Pinyin Source
-EnumCount=4
-Enum0=Sogou
-Enum1=QQ
-Enum2=Google
-Enum3=Baidu
+EnumCount=2
+Enum0=Google
+Enum1=Baidu
 
 [CloudPinyin/ToggleKey]
 Type=Hotkey

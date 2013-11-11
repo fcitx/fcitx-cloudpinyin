@@ -34,10 +34,8 @@
 #define _(x) dgettext("fcitx-cloudpinyin", (x))
 
 typedef enum {
-    CloudPinyin_Sogou = 0,
-    CloudPinyin_QQ = 1,
-    CloudPinyin_Google = 2,
-    CloudPinyin_Baidu = 3
+    CloudPinyin_Google = 0,
+    CloudPinyin_Baidu = 1
 } CloudPinyinSource;
 
 typedef enum {

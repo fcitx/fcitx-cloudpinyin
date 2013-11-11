@@ -99,8 +99,9 @@ static void CloudPinyinReleaseCurlHandle(FcitxCloudPinyin* cloudpinyin,
                                          CURL* curl);
 static INPUT_RETURN_VALUE CloudPinyinToggle(void* arg);
 
-CloudPinyinEngine engine[4] =
+CloudPinyinEngine engine[] =
 {
+#if 0
     {
         "http://web.pinyin.sogou.com/web_ime/patch.php",
         "http://web.pinyin.sogou.com/api/py?key=%s&query=%s",
@@ -113,6 +114,7 @@ CloudPinyinEngine engine[4] =
         QQParseKey,
         QQParsePinyin
     },
+#endif
     {
         NULL,
         "https://www.google.com/inputtools/request?ime=pinyin&text=%s",
