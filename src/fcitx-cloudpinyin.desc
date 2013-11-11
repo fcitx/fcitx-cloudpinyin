@@ -17,7 +17,7 @@ Description=Don't Show the 'via cloud' hint
 
 [CloudPinyin/Source]
 Type=Enum
-DefaultValue=Sogou
+DefaultValue=Google
 Description=Cloud Pinyin Source
 EnumCount=4
 Enum0=Sogou
