@@ -72,6 +72,7 @@ typedef struct _CloudPinyinEngine {
     const char* RequestPinyin;
     void (*ParseKey)(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
     char* (*ParsePinyin)(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue);
+    boolean supportSeparator;
 } CloudPinyinEngine;
 
 static void* CloudPinyinCreate(FcitxInstance* instance);
@@ -119,13 +120,15 @@ CloudPinyinEngine engine[] =
         NULL,
         "https://www.google.com/inputtools/request?ime=pinyin&text=%s",
         NULL,
-        GoogleParsePinyin
+        GoogleParsePinyin,
+        true
     },
     {
         NULL,
         "http://olime.baidu.com/py?py=%s&rn=0&pn=1&ol=1",
         NULL,
-        BaiduParsePinyin
+        BaiduParsePinyin,
+        true
     }
 };
 
@@ -873,6 +876,7 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
     do {
         endflag = (*pinyin != '\0');
         if (*pinyin == ' ' || *pinyin == '\'' || *pinyin == '\0') {
+            boolean isSeparator = (*pinyin) == '\'' || (strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 && (*pinyin) == ' ');
             *pinyin = 0;
 
             if (*lastpos != '\0') {
@@ -888,9 +892,13 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
                 }
                 if (isshuangpin) {
                     if (result) {
-                        if (plength + strlen(result) < MAX_USER_INPUT) {
+                        if (plength + strlen(result) + (engine[cloudpinyin->config.source].supportSeparator ? 1 : 0) < MAX_USER_INPUT) {
                             strcat(p + plength, result);
                             plength += strlen(result);
+                            if (engine[cloudpinyin->config.source].supportSeparator) {
+                                strcat(p + plength, "'");
+                                plength += 1;
+                            }
                             free(result);
                         } else {
                             p[hzlength] = '\0';
@@ -898,9 +906,14 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
                         }
                     }
                 } else {
-                    if (plength + strlen(lastpos) < MAX_USER_INPUT) {
+#define PINYIN_USE_SEPARATOR_CASE (isSeparator && engine[cloudpinyin->config.source].supportSeparator)
+                    if (plength + strlen(lastpos) + (PINYIN_USE_SEPARATOR_CASE ? 1 : 0) < MAX_USER_INPUT) {
                         strcat(p + plength, lastpos);
                         plength += strlen(lastpos);
+                        if (PINYIN_USE_SEPARATOR_CASE) {
+                            strcat(p + plength, "'");
+                            plength += 1;
+                        }
                     } else {
                         p[hzlength] = '\0';
                         break;
@@ -917,6 +930,9 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
         *ascii_part = NULL;
         return NULL;
     } else {
+        if (plength >= 1 && p[plength - 1] == '\'') {
+            p[plength - 1] = '\0';
+        }
         char *res = strdup(p);
         *ascii_part = res + hzlength;
         return res;
