@@ -873,11 +873,20 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
     size_t plength = hzlength;
     strncpy(p, string, hzlength);
     p[hzlength] = '\0';
+    // lastpos points to the start of a pinyin
+    // pinyin points to the end of current pinyin
+    // for example
+    // xi'an
+    // | |
+    // l p
+    // and we check the separator by supportSeparator for each engine.
+    // shuangpin-libpinyin returns full pinyin in preedit, so we also treat space as separator.
     do {
         endflag = (*pinyin != '\0');
         if (*pinyin == ' ' || *pinyin == '\'' || *pinyin == '\0') {
             boolean isSeparator = false;
 
+            // skip all continous separator
             while (*pinyin == ' ' || *pinyin == '\'') {
                 isSeparator = isSeparator || (*pinyin) == '\'' || (strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 && (*pinyin) == ' ');
                 *pinyin = 0;
