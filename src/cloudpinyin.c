@@ -876,16 +876,20 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
     do {
         endflag = (*pinyin != '\0');
         if (*pinyin == ' ' || *pinyin == '\'' || *pinyin == '\0') {
-            boolean isSeparator = (*pinyin) == '\'' || (strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 && (*pinyin) == ' ');
-            *pinyin = 0;
+            boolean isSeparator = false;
+
+            while (*pinyin == ' ' || *pinyin == '\'') {
+                isSeparator = isSeparator || (*pinyin) == '\'' || (strcmp(im->uniqueName, "shuangpin-libpinyin") == 0 && (*pinyin) == ' ');
+                *pinyin = 0;
+                pinyin++;
+            }
 
             if (*lastpos != '\0') {
                 char* result = NULL;
                 boolean isshuangpin = false;
                 if (strcmp(im->uniqueName, "sunpinyin") == 0) {
                     FCITX_DEF_MODULE_ARGS(args, lastpos, &isshuangpin);
-                    result = FcitxSunPinyinInvokeGetFullPinyin(
-                        cloudpinyin->owner, args);
+                    result = FcitxSunPinyinInvokeGetFullPinyin(cloudpinyin->owner, args);
                 } else if (strcmp(im->uniqueName, "shuangpin") == 0) {
                     isshuangpin = true;
                     result = FcitxPinyinSP2QP(cloudpinyin->owner, lastpos);
@@ -919,10 +923,13 @@ char *GetCurrentString(FcitxCloudPinyin* cloudpinyin, char **ascii_part)
                         break;
                     }
                 }
+
+                isSeparator = false;
             }
-            lastpos = pinyin + 1;
+            lastpos = pinyin;
+        } else {
+            pinyin ++;
         }
-        pinyin ++;
     } while(endflag);
     free(string);
     /* no pinyin append, return NULL for off it */
