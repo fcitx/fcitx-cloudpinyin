@@ -5,13 +5,14 @@
 # Translators:
 # Alisha <alisha.4m@gmail.com>, 2012
 # Alisha <alisha.4m@gmail.com>, 2012
+# BrLi <rainman59118@gmail.com>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-11-11 12:02-0500\n"
-"PO-Revision-Date: 2013-06-30 05:50+0000\n"
-"Last-Translator: Xuetian Weng <wengxt@gmail.com>\n"
+"POT-Creation-Date: 2014-06-06 07:01+0200\n"
+"PO-Revision-Date: 2014-06-06 04:58+0000\n"
+"Last-Translator: BrLi <rainman59118@gmail.com>\n"
 "Language-Team: Chinese (Taiwan) (http://www.transifex.com/projects/p/fcitx/"
 "language/zh_TW/)\n"
 "Language: zh_TW\n"
@@ -20,7 +21,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/cloudpinyin.c:681
+#: src/cloudpinyin.c:684
 msgid " (via cloud)"
 msgstr "（來自雲）"
 
@@ -32,7 +33,7 @@ msgstr "為拼音輸入法加入雲拼音支援"
 msgid "Baidu"
 msgstr "百度"
 
-#: src/cloudpinyin.c:616 src/fcitx-cloudpinyin.conf.in:3
+#: src/cloudpinyin.c:619 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
 msgstr "雲拼音"
 
@@ -44,13 +45,13 @@ msgstr "雲拼音候選字順序"
 msgid "Cloud Pinyin Source"
 msgstr "雲拼音來源"
 
-#: src/cloudpinyin.c:618
+#: src/cloudpinyin.c:621
 msgid "Cloud Pinyin is Disabled."
-msgstr ""
+msgstr "雲拼音已停用。"
 
-#: src/cloudpinyin.c:617
+#: src/cloudpinyin.c:620
 msgid "Cloud Pinyin is Enabled."
-msgstr ""
+msgstr "雲拼音已啟用。"
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
@@ -81,9 +82,3 @@ msgstr "最小觸發雲拼音的拼音長度"
 #: src/fcitx-cloudpinyin.desc:29
 msgid "Toggle Cloud Pinyin enabled status"
 msgstr "切換雲拼音啟用狀態"
-
-#~ msgid "QQ"
-#~ msgstr "QQ"
-
-#~ msgid "Sogou"
-#~ msgstr "搜狗"
