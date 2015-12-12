@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # WAKAYAMA Shirou <shirou.faw@gmail.com>, 2013
 # WAKAYAMA Shirou <shirou.faw@gmail.com>, 2013
@@ -9,29 +9,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-11-11 12:02-0500\n"
+"POT-Creation-Date: 2015-12-11 23:17-0800\n"
 "PO-Revision-Date: 2013-11-20 13:16+0000\n"
 "Last-Translator: csslayer <wengxt@gmail.com>\n"
 "Language-Team: Japanese (http://www.transifex.com/fcitx/fcitx/language/ja/)\n"
+"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/cloudpinyin.c:616 src/fcitx-cloudpinyin.conf.in:3
-msgid "Cloud Pinyin"
-msgstr "クラウド Pinyin"
-
-#: src/cloudpinyin.c:617
-msgid "Cloud Pinyin is Enabled."
-msgstr "クラウド Pinyinが有効になりました。"
-
-#: src/cloudpinyin.c:618
-msgid "Cloud Pinyin is Disabled."
-msgstr "クラウド Pinyinが無効になりました。"
-
-#: src/cloudpinyin.c:681
+#: src/cloudpinyin.c:684
 msgid " (via cloud)"
 msgstr "(クラウド使用)"
 
@@ -39,44 +27,57 @@ msgstr "(クラウド使用)"
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
 msgstr "Pinyin 入力メソッドにクラウド Pinyin サポートを追加"
 
-#: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
-#: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
-#: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
-msgid "CloudPinyin"
+#: src/fcitx-cloudpinyin.desc:24
+msgid "Baidu"
+msgstr "Baidu"
+
+#: src/cloudpinyin.c:619 src/fcitx-cloudpinyin.conf.in:3
+msgid "Cloud Pinyin"
 msgstr "クラウド Pinyin"
 
 #: src/fcitx-cloudpinyin.desc:5
 msgid "Cloud Pinyin Candidate Word Order"
 msgstr "クラウド Pinyin 候補順序"
 
-#: src/fcitx-cloudpinyin.desc:11
-msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
-msgstr "クラウド Pinyin を開始する最低 Pinyin 数"
+#: src/fcitx-cloudpinyin.desc:21
+msgid "Cloud Pinyin Source"
+msgstr "クラウド Pinyin 提供元"
+
+#: src/cloudpinyin.c:621
+msgid "Cloud Pinyin is Disabled."
+msgstr "クラウド Pinyinが無効になりました。"
+
+#: src/cloudpinyin.c:620
+msgid "Cloud Pinyin is Enabled."
+msgstr "クラウド Pinyinが有効になりました。"
+
+#: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
+#: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
+#: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
+msgid "CloudPinyin"
+msgstr "クラウド Pinyin"
+
+#: src/fcitx-cloudpinyin.desc:30
+msgid "Disable Cloud Pinyin When you are using mobile can save your network"
+msgstr ""
+"モバイル端末の時にネットワークを消費しないために、クラウド Pinyinを無効化する"
 
 #: src/fcitx-cloudpinyin.desc:16
 msgid "Don't Show the 'via cloud' hint"
 msgstr "'クラウドで' のヒントを表示しない"
 
-#: src/fcitx-cloudpinyin.desc:21
-msgid "Cloud Pinyin Source"
-msgstr "クラウド Pinyin 提供元"
+#: src/fcitx-cloudpinyin.desc:35
+msgid "Enabled"
+msgstr "有効"
 
 #: src/fcitx-cloudpinyin.desc:23
 msgid "Google"
 msgstr "Google"
 
-#: src/fcitx-cloudpinyin.desc:24
-msgid "Baidu"
-msgstr "Baidu"
+#: src/fcitx-cloudpinyin.desc:11
+msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
+msgstr "クラウド Pinyin を開始する最低 Pinyin 数"
 
 #: src/fcitx-cloudpinyin.desc:29
 msgid "Toggle Cloud Pinyin enabled status"
 msgstr "クラウド Pinyin が有効/無効を切り替え"
-
-#: src/fcitx-cloudpinyin.desc:30
-msgid "Disable Cloud Pinyin When you are using mobile can save your network"
-msgstr "モバイル端末の時にネットワークを消費しないために、クラウド Pinyinを無効化する"
-
-#: src/fcitx-cloudpinyin.desc:35
-msgid "Enabled"
-msgstr "有効"
