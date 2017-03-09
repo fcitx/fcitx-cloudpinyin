@@ -125,7 +125,7 @@ CloudPinyinEngine engine[] =
     },
     {
         NULL,
-        "http://olime.baidu.com/py?py=%s&rn=0&pn=1&ol=1",
+        "https://olime.baidu.com/py?py=%s&rn=0&pn=1&ol=1",
         NULL,
         BaiduParsePinyin,
         true
