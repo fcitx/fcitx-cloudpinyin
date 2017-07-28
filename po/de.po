@@ -4,13 +4,14 @@
 #
 # Translators:
 # mar well <m.wellendorf@gmx.de>, 2013
+# mar well <m.wellendorf@gmx.de>, 2017
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2015-12-11 23:17-0800\n"
-"PO-Revision-Date: 2013-11-20 13:16+0000\n"
-"Last-Translator: csslayer <wengxt@gmail.com>\n"
+"POT-Creation-Date: 2017-07-28 06:02-0700\n"
+"PO-Revision-Date: 2017-07-28 12:42+0000\n"
+"Last-Translator: mar well <m.wellendorf@gmx.de>\n"
 "Language-Team: German (http://www.transifex.com/fcitx/fcitx/language/de/)\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -48,7 +49,7 @@ msgstr "Cloudpinyin ist ausgeschaltet"
 
 #: src/cloudpinyin.c:620
 msgid "Cloud Pinyin is Enabled."
-msgstr "Cloudpinyin ist eingeschaltet"
+msgstr "Cloud Pinyin ist eingeschaltet"
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
