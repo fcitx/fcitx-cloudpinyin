@@ -29,7 +29,7 @@
 #define QQ_KEY_LENGTH 32
 #define MAX_CACHE_ENTRY 2048
 #define MAX_ERROR 10
-#define MAX_HANDLE 10l
+#define MAX_HANDLE 100l
 
 #define _(x) dgettext("fcitx-cloudpinyin", (x))
 

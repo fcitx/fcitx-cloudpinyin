@@ -261,8 +261,7 @@ CURL* CloudPinyinGetFreeCurlHandle(FcitxCloudPinyin* cloudpinyin)
             return cloudpinyin->freeList[i].curl;
         }
     }
-    /* return a stalled handle */
-    return curl_easy_init();
+    return NULL;
 }
 
 void CloudPinyinReleaseCurlHandle(FcitxCloudPinyin* cloudpinyin, CURL* curl)
@@ -340,7 +339,7 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     curl_easy_setopt(curl, CURLOPT_URL, engine[cloudpinyin->config.source].RequestKey);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
-    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20l);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10l);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1l);
 
     /* push into pending queue */
@@ -469,6 +468,8 @@ void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPi
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, queue);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
+    curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10l);
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1l);
 
     free(url);
 
