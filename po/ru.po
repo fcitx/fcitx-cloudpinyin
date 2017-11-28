@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# TotalCaesar659 <x24cm5b8c54q6szxw@yandex.ru>, 2016
+# TotalCaesar659 <x24cm5b8c54q6szxw@yandex.ru>, 2016-2017
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2017-09-14 16:02-0700\n"
-"PO-Revision-Date: 2017-08-03 16:57+0000\n"
+"POT-Creation-Date: 2017-11-28 00:03-0800\n"
+"PO-Revision-Date: 2017-11-27 15:15+0000\n"
 "Last-Translator: TotalCaesar659 <x24cm5b8c54q6szxw@yandex.ru>\n"
 "Language-Team: Russian (http://www.transifex.com/fcitx/fcitx/language/ru/)\n"
 "Language: ru\n"
@@ -20,37 +20,37 @@ msgstr ""
 "%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
 "%100>=11 && n%100<=14)? 2 : 3);\n"
 
-#: src/cloudpinyin.c:684
+#: src/cloudpinyin.c:685
 msgid " (via cloud)"
 msgstr "(через облако)"
 
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
-msgstr "Добавить поддержку облака пиньинь для метода ввода пиньинь"
+msgstr "Добавить поддержку Cloud Pinyin для метода ввода пиньинь"
 
 #: src/fcitx-cloudpinyin.desc:24
 msgid "Baidu"
 msgstr "Baidu"
 
-#: src/cloudpinyin.c:619 src/fcitx-cloudpinyin.conf.in:3
+#: src/cloudpinyin.c:620 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
-msgstr "Облако пиньинь"
+msgstr "Cloud Pinyin"
 
 #: src/fcitx-cloudpinyin.desc:5
 msgid "Cloud Pinyin Candidate Word Order"
-msgstr "Порядок слов-кандидатов облака пиньинь"
+msgstr "Порядок слов-кандидатов Cloud Pinyin"
 
 #: src/fcitx-cloudpinyin.desc:21
 msgid "Cloud Pinyin Source"
 msgstr "Источник облака пиньинь"
 
-#: src/cloudpinyin.c:621
+#: src/cloudpinyin.c:622
 msgid "Cloud Pinyin is Disabled."
-msgstr "Облако пиньинь отключено."
+msgstr "Cloud Pinyin отключен."
 
-#: src/cloudpinyin.c:620
+#: src/cloudpinyin.c:621
 msgid "Cloud Pinyin is Enabled."
-msgstr "Облако пиньинь включено."
+msgstr "Cloud Pinyin включен."
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
