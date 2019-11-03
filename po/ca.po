@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2017
+# Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2017-2018
 # Walter Garcia-Fontes <walter.garcia@upf.edu>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2017-12-09 00:03-0800\n"
-"PO-Revision-Date: 2017-12-08 22:02+0000\n"
+"POT-Creation-Date: 2019-11-03 12:27-0800\n"
+"PO-Revision-Date: 2018-06-13 07:07+0000\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (http://www.transifex.com/fcitx/fcitx/language/ca/)\n"
 "Language: ca\n"
@@ -46,7 +46,7 @@ msgstr "Origen de pinyin al núvol"
 
 #: src/cloudpinyin.c:622
 msgid "Cloud Pinyin is Disabled."
-msgstr "El pinyin de núvol està desactivat"
+msgstr "El pinyin al núvol està inhabilitat"
 
 #: src/cloudpinyin.c:621
 msgid "Cloud Pinyin is Enabled."
@@ -70,7 +70,7 @@ msgstr "No mostris els suggerents «via núvol»"
 
 #: src/fcitx-cloudpinyin.desc:35
 msgid "Enabled"
-msgstr "Activat"
+msgstr "Habilitat"
 
 #: src/fcitx-cloudpinyin.desc:23
 msgid "Google"
