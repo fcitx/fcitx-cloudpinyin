@@ -146,7 +146,13 @@ char* BaiduParsePinyin(FcitxCloudPinyin* cloudpinyin, CurlQueue* queue)
             char *realstring = fcitx_utils_malloc0(sizeof(char) * (length + 1));
             strncpy(realstring, start, length);
             realstring[length] = '\0';
-            return realstring;
+            if (fcitx_utf8_check_string(realstring))
+                return realstring;
+            else
+            {
+                free(realstring);
+                return NULL;
+            }
         }
     }
     return NULL;
