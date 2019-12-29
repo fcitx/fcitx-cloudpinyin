@@ -471,6 +471,12 @@ void CloudPinyinAddInputRequest(FcitxCloudPinyin* cloudpinyin, const char* strPi
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10l);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1l);
 
+    char* proxy = cloudpinyin->config.imProxy;
+    /* set proxy if not empty */
+    if (proxy && *proxy) {
+        curl_easy_setopt(curl, CURLOPT_PROXY, proxy);
+    }
+
     free(url);
 
     /* push into pending queue */

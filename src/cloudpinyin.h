@@ -74,6 +74,7 @@ typedef struct {
     CloudPinyinSource source;
     FcitxHotkeys hkToggle;
     boolean bEnabled;
+    char* imProxy;
 } FcitxCloudPinyinConfig;
 
 typedef struct {
