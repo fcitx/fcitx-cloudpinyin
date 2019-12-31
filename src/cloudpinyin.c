@@ -257,6 +257,8 @@ CURL* CloudPinyinGetFreeCurlHandle(FcitxCloudPinyin* cloudpinyin)
             cloudpinyin->freeList[i].used = true;
             if (cloudpinyin->freeList[i].curl == NULL) {
                 cloudpinyin->freeList[i].curl = curl_easy_init();
+            } else {
+                curl_easy_reset(cloudpinyin->freeList[i].curl);
             }
             return cloudpinyin->freeList[i].curl;
         }
@@ -341,6 +343,12 @@ void CloudPinyinRequestKey(FcitxCloudPinyin* cloudpinyin)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CloudPinyinWriteFunction);
     curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10l);
     curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1l);
+
+    char* proxy = cloudpinyin->config.imProxy;
+    /* set proxy if not empty */
+    if (proxy && *proxy) {
+        curl_easy_setopt(curl, CURLOPT_PROXY, proxy);
+    }
 
     /* push into pending queue */
     pthread_mutex_lock(&cloudpinyin->pendingQueueLock);
