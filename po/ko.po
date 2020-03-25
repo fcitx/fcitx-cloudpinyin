@@ -1,81 +1,82 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Bon Keun Seo <scobyseo@gmail.com>, 2017
+# MarongHappy <daemul72@gmail.com>, 2020
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2013-11-11 12:02-0500\n"
-"PO-Revision-Date: 2017-07-09 19:19+0000\n"
-"Last-Translator: Bon Keun Seo <scobyseo@gmail.com>\n"
+"POT-Creation-Date: 2020-03-25 00:02-0700\n"
+"PO-Revision-Date: 2020-03-24 17:23+0000\n"
+"Last-Translator: MarongHappy <daemul72@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/fcitx/fcitx/language/ko/)\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ko\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/cloudpinyin.c:616 src/fcitx-cloudpinyin.conf.in:3
-msgid "Cloud Pinyin"
-msgstr "클라우드 Pinyin"
-
-#: src/cloudpinyin.c:617
-msgid "Cloud Pinyin is Enabled."
-msgstr "클라우드 Pinyin이 활성화됨."
-
-#: src/cloudpinyin.c:618
-msgid "Cloud Pinyin is Disabled."
-msgstr "클라우드 Pinyin이 비활성화됨."
-
-#: src/cloudpinyin.c:681
+#: src/cloudpinyin.c:685
 msgid " (via cloud)"
 msgstr "(클라우드를 통해)"
 
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
-msgstr "Pinyin 입력기에 클라우드 Pinyin 지원을 추가"
-
-#: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
-#: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
-#: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
-msgid "CloudPinyin"
-msgstr "클라우드 Pinyin"
-
-#: src/fcitx-cloudpinyin.desc:5
-msgid "Cloud Pinyin Candidate Word Order"
-msgstr "클라우드 Pinyin 후보 단어 순서"
-
-#: src/fcitx-cloudpinyin.desc:11
-msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
-msgstr "클라우드 Pinyin를 활성화하기 위한 Pinyin의 최소 길이"
-
-#: src/fcitx-cloudpinyin.desc:16
-msgid "Don't Show the 'via cloud' hint"
-msgstr "'클라우드를 통해' 힌트를 보이지 않음"
-
-#: src/fcitx-cloudpinyin.desc:21
-msgid "Cloud Pinyin Source"
-msgstr "클라우드 Pinyin 소스"
-
-#: src/fcitx-cloudpinyin.desc:23
-msgid "Google"
-msgstr "구글"
+msgstr "병음 입력기에 클라우드 병음 지원 추가"
 
 #: src/fcitx-cloudpinyin.desc:24
 msgid "Baidu"
 msgstr "바이두"
 
-#: src/fcitx-cloudpinyin.desc:29
-msgid "Toggle Cloud Pinyin enabled status"
-msgstr "클라우드 Pinyin 활성화 상태 전환"
+#: src/cloudpinyin.c:620 src/fcitx-cloudpinyin.conf.in:3
+msgid "Cloud Pinyin"
+msgstr "클라우드 병음"
+
+#: src/fcitx-cloudpinyin.desc:5
+msgid "Cloud Pinyin Candidate Word Order"
+msgstr "클라우드 병음 후보 단어 순서"
+
+#: src/fcitx-cloudpinyin.desc:21
+msgid "Cloud Pinyin Source"
+msgstr "클라우드 병음 소스"
+
+#: src/cloudpinyin.c:622
+msgid "Cloud Pinyin is Disabled."
+msgstr "클라우드 병음이 비활성화되었습니다."
+
+#: src/cloudpinyin.c:621
+msgid "Cloud Pinyin is Enabled."
+msgstr "클라우드 병음이 활성화되었습니다."
+
+#: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
+#: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
+#: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
+msgid "CloudPinyin"
+msgstr "클라우드 병음"
 
 #: src/fcitx-cloudpinyin.desc:30
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
-msgstr "모바일 데이터 사용시 클라우드 Pinyin 비활성화"
+msgstr "모바일 데이터 사용시 클라우드 병음 비활성화"
+
+#: src/fcitx-cloudpinyin.desc:16
+msgid "Don't Show the 'via cloud' hint"
+msgstr "'클라우드를 통해' 힌트 표시 안함"
 
 #: src/fcitx-cloudpinyin.desc:35
 msgid "Enabled"
-msgstr "활성상태"
+msgstr "활성화됨"
+
+#: src/fcitx-cloudpinyin.desc:23
+msgid "Google"
+msgstr "구글"
+
+#: src/fcitx-cloudpinyin.desc:11
+msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
+msgstr "클라우드 병음을 트리거하는 최소 길이"
+
+#: src/fcitx-cloudpinyin.desc:29
+msgid "Toggle Cloud Pinyin enabled status"
+msgstr "클라우드 병음 활성화 상태 전환"
