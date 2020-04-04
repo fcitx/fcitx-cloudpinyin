@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2020-03-25 00:02-0700\n"
-"PO-Revision-Date: 2020-03-24 17:23+0000\n"
+"POT-Creation-Date: 2020-04-04 00:02-0700\n"
+"PO-Revision-Date: 2020-04-03 14:37+0000\n"
 "Last-Translator: MarongHappy <daemul72@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/fcitx/fcitx/language/ko/)\n"
 "Language: ko\n"
@@ -75,7 +75,7 @@ msgstr "구글"
 
 #: src/fcitx-cloudpinyin.desc:11
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
-msgstr "클라우드 병음을 트리거하는 최소 길이"
+msgstr "클라우드 병음 전환하는 병음의 최소 문자 수"
 
 #: src/fcitx-cloudpinyin.desc:29
 msgid "Toggle Cloud Pinyin enabled status"
