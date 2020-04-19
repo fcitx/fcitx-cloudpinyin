@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2020-04-04 00:02-0700\n"
-"PO-Revision-Date: 2020-04-03 14:37+0000\n"
+"POT-Creation-Date: 2020-04-19 00:02-0700\n"
+"PO-Revision-Date: 2020-04-19 04:57+0000\n"
 "Last-Translator: MarongHappy <daemul72@gmail.com>\n"
 "Language-Team: Korean (http://www.transifex.com/fcitx/fcitx/language/ko/)\n"
 "Language: ko\n"
@@ -33,7 +33,7 @@ msgstr "바이두"
 
 #: src/cloudpinyin.c:620 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
-msgstr "클라우드 병음"
+msgstr "클라우드병음"
 
 #: src/fcitx-cloudpinyin.desc:5
 msgid "Cloud Pinyin Candidate Word Order"
@@ -55,7 +55,7 @@ msgstr "클라우드 병음이 활성화되었습니다."
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
 #: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
 msgid "CloudPinyin"
-msgstr "클라우드 병음"
+msgstr "클라우드병음"
 
 #: src/fcitx-cloudpinyin.desc:30
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
