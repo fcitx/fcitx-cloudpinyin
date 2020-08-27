@@ -4,12 +4,13 @@
 #
 # Translators:
 # scootergrisen, 2017
+# scootergrisen, 2017,2020
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2017-10-18 06:02-0700\n"
-"PO-Revision-Date: 2017-10-18 12:35+0000\n"
+"POT-Creation-Date: 2020-08-27 00:02-0700\n"
+"PO-Revision-Date: 2020-08-26 21:42+0000\n"
 "Last-Translator: scootergrisen\n"
 "Language-Team: Danish (http://www.transifex.com/fcitx/fcitx/language/da/)\n"
 "Language: da\n"
@@ -18,48 +19,48 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/cloudpinyin.c:684
+#: src/cloudpinyin.c:685
 msgid " (via cloud)"
 msgstr " (via sky)"
 
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
-msgstr "Tilføj understøttelse af sky-Pinyin til Pinyin-inputmetode"
+msgstr "Tilføj understøttelse af skypinyin til Pinyin-inputmetode"
 
 #: src/fcitx-cloudpinyin.desc:24
 msgid "Baidu"
 msgstr "Baidu"
 
-#: src/cloudpinyin.c:619 src/fcitx-cloudpinyin.conf.in:3
+#: src/cloudpinyin.c:620 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
-msgstr "Sky-Pinyin"
+msgstr "Skypinyin"
 
 #: src/fcitx-cloudpinyin.desc:5
 msgid "Cloud Pinyin Candidate Word Order"
-msgstr "Rækkefølge på kandidatord for sky-Pinyin"
+msgstr "Rækkefølge på kandidatord for skypinyin"
 
 #: src/fcitx-cloudpinyin.desc:21
 msgid "Cloud Pinyin Source"
-msgstr "Sky-Pinyin-kilde"
+msgstr "Skypinyin-kilde"
+
+#: src/cloudpinyin.c:622
+msgid "Cloud Pinyin is Disabled."
+msgstr "Skypinyin er deaktiveret."
 
 #: src/cloudpinyin.c:621
-msgid "Cloud Pinyin is Disabled."
-msgstr "Sky-Pinyin er deaktiveret."
-
-#: src/cloudpinyin.c:620
 msgid "Cloud Pinyin is Enabled."
-msgstr "Sky-Pinyin er aktiveret."
+msgstr "Skypinyin er aktiveret."
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
 #: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
 msgid "CloudPinyin"
-msgstr "SkyPinyin"
+msgstr "Skypinyin"
 
 #: src/fcitx-cloudpinyin.desc:30
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
 msgstr ""
-"Deaktivering af sky-Pinyin kan sparer på din netværkstrafik når du bruger "
+"Deaktivering af skypinyin kan sparer på din netværkstrafik når du bruger "
 "mobiltelefon"
 
 #: src/fcitx-cloudpinyin.desc:16
@@ -76,8 +77,8 @@ msgstr "Google"
 
 #: src/fcitx-cloudpinyin.desc:11
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
-msgstr "Minimumlængde før Pinyin udløser sky-Pinyin"
+msgstr "Minimumlængde før Pinyin udløser skypinyin"
 
 #: src/fcitx-cloudpinyin.desc:29
 msgid "Toggle Cloud Pinyin enabled status"
-msgstr "Skift aktiveringsstatus for sky-Pinyin"
+msgstr "Skift aktiveringsstatus for skypinyin"
