@@ -3,15 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 #
 # Translators:
-# Christopher Meng <i@cicku.me>, 2012
-# csslayer <wengxt@gmail.com>, 2013
+# ᴄʜʀɪsᴛᴏᴘʜᴇʀ ᴍᴇɴɢ <i@cicku.me>, 2012
+# ᴄʜʀɪsᴛᴏᴘʜᴇʀ ᴍᴇɴɢ <i@cicku.me>, 2012
+# csslayer <wengxt@gmail.com>, 2011,2013
+# csslayer <wengxt@gmail.com>, 2013,2022
 # csslayer <wengxt@gmail.com>, 2011,2013
 msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2015-12-11 23:17-0800\n"
-"PO-Revision-Date: 2013-11-20 13:16+0000\n"
+"POT-Creation-Date: 2022-01-13 20:25+0000\n"
+"PO-Revision-Date: 2022-01-12 21:41+0000\n"
 "Last-Translator: csslayer <wengxt@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/fcitx/fcitx/"
 "language/zh_CN/)\n"
@@ -21,7 +23,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/cloudpinyin.c:684
+#: src/cloudpinyin.c:685
 msgid " (via cloud)"
 msgstr " (来自云)"
 
@@ -33,7 +35,7 @@ msgstr "为拼音输入法加入云拼音支持"
 msgid "Baidu"
 msgstr "百度"
 
-#: src/cloudpinyin.c:619 src/fcitx-cloudpinyin.conf.in:3
+#: src/cloudpinyin.c:620 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
 msgstr "云拼音"
 
@@ -45,13 +47,13 @@ msgstr "云拼音候选词顺序"
 msgid "Cloud Pinyin Source"
 msgstr "云拼音来源"
 
-#: src/cloudpinyin.c:621
+#: src/cloudpinyin.c:622
 msgid "Cloud Pinyin is Disabled."
 msgstr "云拼音已禁用。"
 
-#: src/cloudpinyin.c:620
+#: src/cloudpinyin.c:621
 msgid "Cloud Pinyin is Enabled."
-msgstr "云拼音已启用。"
+msgstr "已启用云拼音。"
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
