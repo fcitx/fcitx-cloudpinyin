@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: fcitx\n"
 "Report-Msgid-Bugs-To: fcitx-dev@googlegroups.com\n"
-"POT-Creation-Date: 2022-04-09 20:27+0000\n"
+"POT-Creation-Date: 2022-04-10 20:28+0000\n"
 "PO-Revision-Date: 2011-11-16 06:52+0000\n"
 "Last-Translator: Junghee Lee <daemul72@gmail.com>, 2022\n"
 "Language-Team: Korean (http://www.transifex.com/fcitx/fcitx/language/ko/)\n"
@@ -27,7 +27,7 @@ msgstr "(클라우드를 통해)"
 
 #: src/fcitx-cloudpinyin.conf.in:4
 msgid "Add Cloud Pinyin Support to Pinyin Input Method"
-msgstr "Pinyin 입력기에 클라우드 Pinyin 지원 추가"
+msgstr "Pinyin 입력기에 Cloud Pinyin 지원 추가"
 
 #: src/fcitx-cloudpinyin.desc:24
 msgid "Baidu"
@@ -35,33 +35,33 @@ msgstr "바이두"
 
 #: src/cloudpinyin.c:620 src/fcitx-cloudpinyin.conf.in:3
 msgid "Cloud Pinyin"
-msgstr "클라우드Pinyin"
+msgstr "Cloud Pinyin"
 
 #: src/fcitx-cloudpinyin.desc:5
 msgid "Cloud Pinyin Candidate Word Order"
-msgstr "클라우드 Pinyin 후보 단어 순서"
+msgstr "Cloud Pinyin 후보 단어 순서"
 
 #: src/fcitx-cloudpinyin.desc:21
 msgid "Cloud Pinyin Source"
-msgstr "클라우드 Pinyin 소스"
+msgstr "Cloud Pinyin 소스"
 
 #: src/cloudpinyin.c:622
 msgid "Cloud Pinyin is Disabled."
-msgstr "클라우드 Pinyin이 비활성화되었습니다."
+msgstr "Cloud Pinyin이 비활성화되었습니다."
 
 #: src/cloudpinyin.c:621
 msgid "Cloud Pinyin is Enabled."
-msgstr "클라우드 Pinyin이 활성화되었습니다."
+msgstr "Cloud Pinyin이 활성화되었습니다."
 
 #: src/fcitx-cloudpinyin.desc:1 src/fcitx-cloudpinyin.desc:7
 #: src/fcitx-cloudpinyin.desc:13 src/fcitx-cloudpinyin.desc:18
 #: src/fcitx-cloudpinyin.desc:26 src/fcitx-cloudpinyin.desc:32
 msgid "CloudPinyin"
-msgstr "클라우드Pinyin"
+msgstr "CloudPinyin"
 
 #: src/fcitx-cloudpinyin.desc:30
 msgid "Disable Cloud Pinyin When you are using mobile can save your network"
-msgstr "모바일 데이터 사용시 클라우드 Pinyin 비활성화"
+msgstr "모바일 데이터 사용시 Cloud Pinyin 비활성화"
 
 #: src/fcitx-cloudpinyin.desc:16
 msgid "Don't Show the 'via cloud' hint"
@@ -77,8 +77,8 @@ msgstr "구글"
 
 #: src/fcitx-cloudpinyin.desc:11
 msgid "Minimum Length of Pinyin To Trigger Cloud Pinyin"
-msgstr "클라우드 Pinyin 전환할 Pinyin의 최소 문자 수"
+msgstr "Cloud Pinyin 트리거할 Pinyin의 최소 문자 수"
 
 #: src/fcitx-cloudpinyin.desc:29
 msgid "Toggle Cloud Pinyin enabled status"
-msgstr "클라우드 Pinyin 활성화 상태 전환"
+msgstr "Cloud Pinyin 활성화 상태 전환"
