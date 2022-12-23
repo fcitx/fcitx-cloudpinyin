@@ -28,6 +28,7 @@ CONFIG_BINDING_REGISTER("CloudPinyin", "DontShowSource", bDontShowSource);
 CONFIG_BINDING_REGISTER("CloudPinyin", "Source", source);
 CONFIG_BINDING_REGISTER("CloudPinyin", "ToggleKey", hkToggle);
 CONFIG_BINDING_REGISTER("CloudPinyin", "Enabled", bEnabled);
+CONFIG_BINDING_REGISTER("CloudPinyin", "Proxy", imProxy);
 CONFIG_BINDING_END();
 
 // kate: indent-mode cstyle; space-indent on; indent-width 0;

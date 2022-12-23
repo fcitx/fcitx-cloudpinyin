@@ -23,6 +23,11 @@ EnumCount=2
 Enum0=Google
 Enum1=Baidu
 
+[CloudPinyin/Proxy]
+Type=String
+DefaultValue=
+Description=Proxy URL (curl format)
+
 [CloudPinyin/ToggleKey]
 Type=Hotkey
 DefaultValue=
